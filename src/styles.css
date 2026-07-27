@@ -304,6 +304,23 @@ h2 {
   min-height: 150px;
 }
 
+.pokedex-frame {
+  border: 3px solid rgba(15, 23, 42, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.pokedex-frame::before {
+  content: '';
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  background:
+    radial-gradient(circle at 12px center, rgba(220, 38, 38, 0.9) 0 6px, transparent 7px),
+    radial-gradient(circle at 30px center, rgba(250, 204, 21, 0.9) 0 6px, transparent 7px),
+    radial-gradient(circle at 48px center, rgba(34, 197, 94, 0.9) 0 6px, transparent 7px);
+}
+
 .companion-sprite-wrap {
   min-height: 220px;
   display: grid;

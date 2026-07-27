@@ -7,7 +7,7 @@ const moods = [
     emoji: '😔',
     tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
     themeClass: 'theme-sad',
-    pokemonName: 'Crying Cubone',
+    pokemonName: 'Cubone',
     pokemonPower: 'soft rain power',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif',
@@ -186,15 +186,15 @@ const ambientTracks = {
   },
   rain: {
     label: 'Rain',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    url: 'https://orangefreesounds.com/wp-content/uploads/2014/07/Rain-sound-summer-storm.mp3',
   },
   waves: {
     label: 'Waves',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    url: 'https://www.orangefreesounds.com/wp-content/uploads/2016/08/Waves-sound-effect.mp3',
   },
   forest: {
     label: 'Forest',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    url: 'https://www.orangefreesounds.com/wp-content/uploads/2021/03/Forest-sound-effect.mp3',
   },
 };
 
@@ -422,8 +422,7 @@ function App() {
           {currentStep === 'mood' && (
             <section className="card mood-stage" aria-labelledby="mood-picker-heading">
               <div className="mood-stage-copy">
-                <h1 id="mood-picker-heading">Mood Tracker: pick the Pokemon that matches how you feel.</h1>
-                <p className="hero-copy">Choose one mood guide to unlock your energy check, activity suggestion, and reflection.</p>
+                <h1 id="mood-picker-heading">Welcome, Trainer. Your feelings are waiting to be discovered. Record today's encounter and learn more about your emotional journey.</h1>
                 <p className="mood-tone">{hasPickedMood ? selectedMood.tone : defaultView.tone}</p>
               </div>
 
@@ -433,13 +432,13 @@ function App() {
                     const isSelected = confirmedMoodId === mood.id;
 
                     return (
-                      <button
-                        key={mood.id}
-                        type="button"
-                        className={`mood-card ${mood.auraClass} ${isSelected ? 'selected' : ''}`}
-                        onClick={() => handleChooseMood(mood.id)}
-                        aria-pressed={isSelected}
-                      >
+                       <button
+                         key={mood.id}
+                         type="button"
+                         className={`mood-card pokedex-frame ${mood.auraClass} ${isSelected ? 'selected' : ''}`}
+                         onClick={() => handleChooseMood(mood.id)}
+                         aria-pressed={isSelected}
+                       >
                         <div className={`companion-sprite-wrap mood-card-sprite ${mood.auraClass}`}>
                           <img
                             className="companion-sprite"
@@ -731,7 +730,7 @@ function App() {
             onClick={() => setSoundOpen((current) => !current)}
             aria-expanded={soundOpen}
           >
-            <span className="sound-toggle-label">{ambientMode === 'off' ? 'Sound off' : 'Sound on'}</span>
+            <span className="sound-toggle-label">{ambientMode === 'off' ? '🔇' : '🎵'}</span>
             <span className="sound-toggle-arrow" aria-hidden="true">▾</span>
           </button>
           {soundOpen && (
