@@ -247,6 +247,16 @@ h2 {
   text-align: center;
 }
 
+.trainer-greeting {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .mood-tone {
   font-family: 'Plus Jakarta Sans', Arial, sans-serif;
   font-size: 1.3rem;

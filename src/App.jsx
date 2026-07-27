@@ -422,7 +422,8 @@ function App() {
           {currentStep === 'mood' && (
             <section className="card mood-stage" aria-labelledby="mood-picker-heading">
               <div className="mood-stage-copy">
-                <h1 id="mood-picker-heading">Welcome, Trainer. Your feelings are waiting to be discovered. Record today's encounter and learn more about your emotional journey.</h1>
+                <p className="trainer-greeting">Welcome, Trainer.</p>
+                <h1 id="mood-picker-heading">Your feelings are waiting to be discovered. Record today's encounter and learn more about your emotional journey.</h1>
                 <p className="mood-tone">{hasPickedMood ? selectedMood.tone : defaultView.tone}</p>
               </div>
 
