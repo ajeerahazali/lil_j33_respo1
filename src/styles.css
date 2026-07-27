@@ -162,16 +162,33 @@ input {
   font-size: 0.96rem;
 }
 
-.weather-sound-control {
-  display: grid;
-  gap: 6px;
-  margin-top: 8px;
+.sound-widget {
+  position: fixed;
+  top: 280px;
+  right: 20px;
+  width: min(230px, calc(100vw - 40px));
+  z-index: 20;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--widget-bg);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(16px);
 }
 
-.sound-control-label {
-  color: var(--text-soft);
-  font-size: 0.78rem;
-  font-weight: 700;
+.sound-widget-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.sound-widget-title {
+  margin: 0 0 10px;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  font-size: 0.96rem;
+  color: var(--text-main);
 }
 
 .sound-chip-row {
@@ -446,10 +463,12 @@ h2 {
 
 .section-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) 1fr;
+  grid-template-columns: 1fr;
   gap: 24px;
   padding: 30px;
   margin-bottom: 22px;
+  justify-items: center;
+  text-align: center;
 }
 
 .section-grid-compact {
@@ -494,6 +513,7 @@ h2 {
 
 .section-copy {
   padding-right: 8px;
+  text-align: center;
 }
 
 .reflection-panel {
@@ -503,6 +523,10 @@ h2 {
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 20px;
   padding: 22px;
+  max-width: 720px;
+  width: 100%;
+  justify-items: center;
+  text-align: center;
 }
 
 .slider-wrap {
@@ -520,6 +544,9 @@ h2 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
+  max-width: 720px;
+  width: 100%;
+  justify-items: center;
 }
 
 .energy-card {
@@ -589,6 +616,9 @@ h2 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+  max-width: 720px;
+  width: 100%;
+  justify-items: center;
 }
 
 .activity-card {
@@ -923,7 +953,8 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .weather-widget {
+  .weather-widget,
+  .sound-widget {
     position: static;
     width: 100%;
     margin-bottom: 16px;

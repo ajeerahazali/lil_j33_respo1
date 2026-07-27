@@ -212,6 +212,14 @@ const ambientTracks = {
     label: 'Forest',
     url: 'https://www.orangefreesounds.com/wp-content/uploads/2021/03/Forest-sound-effect.mp3',
   },
+  lofi: {
+    label: 'Lofi',
+    url: 'https://www.fesliyanstudios.com/download-link.php?src=i&id=350',
+  },
+  pokemon: {
+    label: 'Pokemon Theme',
+    url: 'https://instrumentalfx.co/wp-content/upload/11/Pokemon-Theme-Song.mp3',
+  },
 };
 
 function getEnergyBand(energy) {
@@ -419,44 +427,49 @@ function App() {
             <p className="weather-widget-message weather-error">Unavailable right now</p>
           )}
 
-           {weatherState.status === 'ready' && weatherState.data && (
-             <div className="weather-widget-grid">
-               <div>
-                 <span>Location</span>
-                 <strong>Kuala Lumpur</strong>
-               </div>
-               <div>
-                 <span>Condition</span>
-                 <strong>{weatherSummary}</strong>
-               </div>
-               <div>
-                 <span>Temperature</span>
-                 <strong>{weatherState.data.temperature} C</strong>
-               </div>
-             </div>
-           )}
-           <div className="weather-sound-control">
-             <span className="sound-control-label">Sound</span>
-             <div className="sound-chip-row">
-               {Object.entries(ambientTracks).map(([key, track]) => {
-                 const isSelected = ambientMode === key;
+            {weatherState.status === 'ready' && weatherState.data && (
+              <div className="weather-widget-grid">
+                <div>
+                  <span>Location</span>
+                  <strong>Kuala Lumpur</strong>
+                </div>
+                <div>
+                  <span>Condition</span>
+                  <strong>{weatherSummary}</strong>
+                </div>
+                <div>
+                  <span>Temperature</span>
+                  <strong>{weatherState.data.temperature} C</strong>
+                </div>
+              </div>
+            )}
+          </aside>
 
-                 return (
-                   <button
-                     key={key}
-                     type="button"
-                     className={`sound-chip ${isSelected ? 'selected' : ''}`}
-                     onClick={() => setAmbientMode(key)}
-                   >
-                     {track.label}
-                   </button>
-                 );
-               })}
-             </div>
-           </div>
-         </aside>
+          <div className="sound-widget" aria-label="Sound options">
+            <div className="sound-widget-head">
+              <div>
+                <h2 className="sound-widget-title">Sound</h2>
+              </div>
+            </div>
+            <div className="sound-chip-row">
+              {Object.entries(ambientTracks).map(([key, track]) => {
+                const isSelected = ambientMode === key;
 
-        <div className="step-frame section-reveal" key={currentStep}>
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`sound-chip ${isSelected ? 'selected' : ''}`}
+                    onClick={() => setAmbientMode(key)}
+                  >
+                    {track.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+         <div className="step-frame section-reveal" key={currentStep}>
           {currentStep === 'mood' && (
             <section className="card mood-stage" aria-labelledby="mood-picker-heading">
               <div className="mood-stage-copy">
@@ -579,7 +592,6 @@ function App() {
             <section className="card section-grid" aria-labelledby="activity-suggestion-heading">
               <div className="section-copy">
                 <h2 id="activity-suggestion-heading">Activity Suggestion</h2>
-                <p>These three ideas update live based on your chosen mood and energy.</p>
               </div>
 
               <div className="reflection-panel">
