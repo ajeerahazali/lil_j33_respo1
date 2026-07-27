@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 
 const moods = [
   {
@@ -198,26 +198,32 @@ const energyOptions = [
 const ambientTracks = {
   off: {
     label: 'Off',
+    emoji: '🔇',
     url: '',
   },
   rain: {
     label: 'Rain',
+    emoji: '🌧️',
     url: 'https://orangefreesounds.com/wp-content/uploads/2014/07/Rain-sound-summer-storm.mp3',
   },
   waves: {
     label: 'Waves',
+    emoji: '🌊',
     url: 'https://www.orangefreesounds.com/wp-content/uploads/2016/08/Waves-sound-effect.mp3',
   },
   forest: {
     label: 'Forest',
+    emoji: '🌳',
     url: 'https://www.orangefreesounds.com/wp-content/uploads/2021/03/Forest-sound-effect.mp3',
   },
   lofi: {
-    label: 'Lofi',
+    label: 'Poké & Chill',
+    emoji: '🎶',
     url: 'https://www.fesliyanstudios.com/download-link.php?src=i&id=350',
   },
   pokemon: {
     label: 'Pokemon Theme',
+    emoji: '🔴',
     url: 'https://instrumentalfx.co/wp-content/upload/11/Pokemon-Theme-Song.mp3',
   },
 };
@@ -233,14 +239,28 @@ function App() {
   const [energy, setEnergy] = useState(5);
   const [hasChosenEnergy, setHasChosenEnergy] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState('');
-  const [colorMode, setColorMode] = useState('light');
+  const [colorMode, setColorMode] = useState('dark');
   const [ambientMode, setAmbientMode] = useState('off');
   const [currentStep, setCurrentStep] = useState('mood');
   const [noticedText, setNoticedText] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
   const [soundOpen, setSoundOpen] = useState(false);
-  const [journalText, setJournalText] = useState('');
-  const [showJournal, setShowJournal] = useState(false);
+  const [moodCount, setMoodCount] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mooddex-count');
+      return stored ? Number(stored) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [moodEntries, setMoodEntries] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mooddex-entries');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [weatherState, setWeatherState] = useState({
     status: 'loading',
     data: null,
@@ -335,6 +355,22 @@ function App() {
   }, []);
 
   useEffect(() => {
+    try {
+      localStorage.setItem('mooddex-count', String(moodCount));
+    } catch {
+      // ignore storage errors
+    }
+  }, [moodCount]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('mooddex-entries', JSON.stringify(moodEntries));
+    } catch {
+      // ignore storage errors
+    }
+  }, [moodEntries]);
+
+  useEffect(() => {
     const audio = ambientAudioRef.current;
 
     if (!audio) {
@@ -382,6 +418,16 @@ function App() {
     }
   };
 
+  const completeCheckIn = useCallback(() => {
+    setMoodCount((current) => current + 1);
+    setConfirmedMoodId('');
+    setHasChosenEnergy(false);
+    setSelectedActivity('');
+    setNoticedText('');
+    setCurrentStep('mood');
+    setJournalText('');
+  }, []);
+
   const stepConfig = {
     mood: { previous: null, next: 'energy', canContinue: hasPickedMood },
     energy: { previous: 'mood', next: 'activity', canContinue: hasChosenEnergy },
@@ -415,6 +461,7 @@ function App() {
             </span>
             <span className="mode-toggle-label">{colorMode === 'dark' ? 'Dark mode' : 'Light mode'}</span>
           </button>
+          <div className="mood-count-badge" aria-live="polite">Recorded: {moodCount}</div>
         </aside>
 
         <aside className="weather-widget" aria-live="polite">
@@ -456,8 +503,8 @@ function App() {
               onClick={() => setSoundOpen((current) => !current)}
               aria-expanded={soundOpen}
             >
-              <span className="sound-toggle-icon" aria-hidden="true">🎵</span>
-              <span className="sound-toggle-label">Sound</span>
+              <span className="sound-toggle-icon" aria-hidden="true">{ambientMode === 'off' ? '🔇' : '🎵'}</span>
+              <span className="sound-toggle-label">{ambientMode === 'off' ? 'Sound off' : 'Sound on'}</span>
               <span className="sound-toggle-arrow" aria-hidden="true">▾</span>
             </button>
             {soundOpen && (
@@ -472,7 +519,8 @@ function App() {
                       className={`sound-chip ${isSelected ? 'selected' : ''}`}
                       onClick={() => setAmbientMode(key)}
                     >
-                      {track.label}
+                      <span className="sound-chip-emoji" aria-hidden="true">{track.emoji}</span>
+                      <span className="sound-chip-label">{track.label}</span>
                     </button>
                   );
                 })}
@@ -484,13 +532,13 @@ function App() {
          <div className="step-frame section-reveal" key={currentStep}>
           {currentStep === 'mood' && (
             <section className="card mood-stage" aria-labelledby="mood-picker-heading">
-              <div className="mood-stage-copy">
-                <p className="trainer-greeting">Welcome, Trainer.</p>
-                <h1 id="mood-picker-heading">Your feelings are waiting to be discovered. Record today's encounter and learn more about your emotional journey.</h1>
-                <p className="mood-tone">{hasPickedMood ? selectedMood.tone : defaultView.tone}</p>
-              </div>
+                <div className="mood-stage-copy">
+                  <p className="trainer-greeting">Welcome, Trainer.</p>
+                  <h1 id="mood-picker-heading">Your feelings are waiting to be discovered. Record today's encounter and learn more about your emotional journey.</h1>
+                </div>
 
               <div className="mood-stage-panel">
+                <p className="mood-tone mood-tone-above-grid">{defaultView.tone}</p>
                 <div className="mood-grid" role="radiogroup" aria-label="Choose a mood guide">
                   {moods.map((mood) => {
                     const isSelected = confirmedMoodId === mood.id;
@@ -503,7 +551,10 @@ function App() {
                          onClick={() => handleChooseMood(mood.id)}
                          aria-pressed={isSelected}
                        >
-                         <span className="mood-card-power" aria-hidden="true">{mood.powerIcon}</span>
+                          <span className="mood-card-power" aria-hidden="true">
+                            <span className="mood-card-power-text">{mood.pokemonPower}</span>
+                            {mood.powerIcon}
+                          </span>
                          <div className={`companion-sprite-wrap mood-card-sprite ${mood.auraClass}`}>
                           <img
                             className="companion-sprite"
@@ -513,156 +564,171 @@ function App() {
                         </div>
                         <div className="companion-copy">
                           <strong>{mood.pokemonName}</strong>
-                          <span>{mood.pokemonPower}</span>
                           <p>{mood.tone}</p>
                         </div>
                       </button>
                     );
                   })}
                 </div>
-
-                <div className="step-nav step-nav-single">
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => goToStep(stepConfig.mood.next)}
-                    disabled={!stepConfig.mood.canContinue}
-                  >
-                    Continue
-                  </button>
-                </div>
               </div>
             </section>
           )}
 
-          {currentStep === 'energy' && hasPickedMood && (
-            <section className="card section-grid section-grid-compact" aria-labelledby="energy-heading">
-              <div className="section-copy">
-                <h2 id="energy-heading">Energy Check</h2>
-                <p>Choose the energy card that best matches how much momentum you have right now.</p>
-              </div>
+             {currentStep === 'energy' && hasPickedMood && (
+              <section className="card section-grid section-grid-compact" aria-labelledby="energy-heading">
+                <div className="section-copy">
+                  <p className="page-greeting">Energy Check</p>
+                </div>
 
-              <div className="reflection-panel">
-                <div className="reflection-hero">
-                  <div className={`reflection-pokemon ${currentMoodCard.auraClass}`}>
+                <div className="reflection-panel">
+                  <div className="slider-wrap" aria-label="Choose your energy level">
+                    <h2 id="energy-heading" className="page-heading" style={{marginBottom: '10px'}}>Choose the energy card that best matches how much momentum you have right now.</h2>
+                    <div className="energy-card-grid">
+                      {energyOptions.map((option) => {
+                        const isSelected = option.id === selectedEnergyOption.id && hasChosenEnergy;
+
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            className={`energy-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => handleEnergyCardPick(option.value)}
+                          >
+                            <span className="energy-emoji" aria-hidden="true">
+                              {option.emoji}
+                            </span>
+                            <strong>{option.label}</strong>
+                            <span>{option.helper}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+               <div className="reflection-panel reflection-panel-left">
+                <div className={`mood-card pokedex-frame ${currentMoodCard.auraClass} reflection-pokemon-hero`}>
+                  <span className="mood-card-power" aria-hidden="true">
+                    <span className="mood-card-power-text">{currentMoodCard.pokemonPower}</span>
+                    {currentMoodCard.powerIcon && <span aria-hidden="true">{currentMoodCard.powerIcon}</span>}
+                  </span>
+                  <div className={`companion-sprite-wrap mood-card-sprite ${currentMoodCard.auraClass}`}>
                     <img
-                      className="reflection-pokemon-sprite"
+                      className="companion-sprite"
                       src={currentMoodCard.sprite}
-                      alt={`${currentMoodCard.pokemonName} summary sprite`}
+                      alt={`${currentMoodCard.pokemonName} animated pixel companion`}
                     />
                   </div>
-                  <div className="reflection-hero-copy">
+                  <div className="reflection-hero-copy reflection-hero-copy-left">
                     <strong>{currentMoodCard.pokemonName}</strong>
-                    <span>{currentMoodCard.pokemonPower}</span>
                     <p>{currentMoodCard.tone}</p>
                   </div>
                 </div>
+              </div>
 
-                <div className="slider-wrap" aria-label="Choose your energy level">
-                  <span>Energy level</span>
-                  <div className="energy-card-grid">
-                    {energyOptions.map((option) => {
-                      const isSelected = option.id === selectedEnergyOption.id && hasChosenEnergy;
+              <div className="step-nav">
+                <button type="button" className="step-button" onClick={() => goToStep(stepConfig.energy.previous)}>
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="step-button step-button-primary"
+                  onClick={() => goToStep(stepConfig.energy.next)}
+                  disabled={!stepConfig.energy.canContinue}
+                >
+                  Continue
+                </button>
+              </div>
+            </section>
+          )}
 
-                      return (
-                        <button
-                          key={option.id}
-                          type="button"
-                          className={`energy-card ${isSelected ? 'selected' : ''}`}
-                          onClick={() => handleEnergyCardPick(option.value)}
-                        >
-                          <span className="energy-emoji" aria-hidden="true">
-                            {option.emoji}
-                          </span>
-                          <strong>{option.label}</strong>
-                          <span>{option.helper}</span>
-                        </button>
-                      );
+             {currentStep === 'activity' && hasPickedMood && hasChosenEnergy && (
+              <section className="card section-grid section-grid-compact" aria-labelledby="activity-suggestion-heading">
+                <div className="section-copy">
+                  <p className="page-greeting">Activity Suggestion</p>
+                </div>
+
+                <div className="reflection-panel">
+                  <h2 id="activity-suggestion-heading" className="page-heading" style={{marginBottom: '10px'}}>Choose the activity that best fits your energy right now.</h2>
+                  <div className="activity-list">
+                    {activities.map((activity) => {
+                      const isSelected = activity === selectedActivity;
+                      const quote = activityQuotes[activity] || 'One kind step is enough for right now.';
+
+                       return (
+                          <button
+                            key={activity}
+                            type="button"
+                            className={`activity-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => setSelectedActivity(activity)}
+                          >
+                            <strong>{activity}</strong>
+                            <span>{quote}</span>
+                          </button>
+                       );
                     })}
                   </div>
-                  <small>Choose the card that best matches your energy right now.</small>
                 </div>
 
-                <div className="step-nav">
-                  <button type="button" className="step-button" onClick={() => goToStep(stepConfig.energy.previous)}>
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => goToStep(stepConfig.energy.next)}
-                    disabled={!stepConfig.energy.canContinue}
-                  >
-                    Continue
-                  </button>
-                </div>
-              </div>
+                <div className="reflection-panel reflection-panel-left">
+                 <div className={`mood-card pokedex-frame ${selectedMood.auraClass} reflection-pokemon-hero reflection-pokemon-hero-left`}>
+                   <span className="mood-card-power" aria-hidden="true">
+                     <span className="mood-card-power-text">{selectedMood.pokemonPower}</span>
+                     {selectedMood.powerIcon && <span aria-hidden="true">{selectedMood.powerIcon}</span>}
+                   </span>
+                   <div className={`companion-sprite-wrap mood-card-sprite ${selectedMood.auraClass}`}>
+                     <img
+                       className="companion-sprite"
+                       src={selectedMood.sprite}
+                       alt={`${selectedMood.pokemonName} animated pixel companion`}
+                     />
+                   </div>
+                   <div className="reflection-hero-copy reflection-hero-copy-left">
+                     <strong>{selectedMood.pokemonName}</strong>
+                     <p>{selectedMood.tone}</p>
+                   </div>
+                 </div>
+               </div>
+
+               <div className="step-nav">
+                 <button type="button" className="step-button" onClick={() => goToStep(stepConfig.activity.previous)}>
+                   Back
+                 </button>
+                 <button
+                   type="button"
+                   className="step-button step-button-primary"
+                   onClick={() => goToStep(stepConfig.activity.next)}
+                   disabled={!stepConfig.activity.canContinue}
+                 >
+                   Continue
+                 </button>
+               </div>
             </section>
           )}
 
-           {currentStep === 'activity' && hasPickedMood && hasChosenEnergy && (
-            <section className="card section-grid section-grid-compact" aria-labelledby="activity-suggestion-heading">
-              <div className="section-copy">
-                <h2 id="activity-suggestion-heading">Activity Suggestion</h2>
-              </div>
-
-              <div className="reflection-panel">
-                <div className="activity-list">
-                  {activities.map((activity) => {
-                    const isSelected = activity === selectedActivity;
-                    const quote = activityQuotes[activity] || 'One kind step is enough for right now.';
-
-                     return (
-                        <button
-                          key={activity}
-                          type="button"
-                          className={`activity-card ${isSelected ? 'selected' : ''}`}
-                          onClick={() => setSelectedActivity(activity)}
-                        >
-                          <strong>{activity}</strong>
-                          <span>{quote}</span>
-                        </button>
-                     );
-                  })}
-                </div>
-
-                <div className="step-nav">
-                  <button type="button" className="step-button" onClick={() => goToStep(stepConfig.activity.previous)}>
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => goToStep(stepConfig.activity.next)}
-                    disabled={!stepConfig.activity.canContinue}
-                  >
-                    Continue
-                  </button>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {currentStep === 'reflection' && hasPickedActivity && (
+           {currentStep === 'reflection' && hasPickedActivity && (
             <section className="card section-grid section-grid-compact" aria-labelledby="quick-reflection-heading">
               <div className="section-copy">
-                <h2 id="quick-reflection-heading">Daily Check-in Summary</h2>
-                <p>{selectedMood.emoji} You showed up for yourself today.</p>
+                <p className="page-greeting">Daily Check-in Summary</p>
+                <h2 id="quick-reflection-heading" className="page-heading">{selectedMood.emoji} You showed up for yourself today.</h2>
               </div>
 
-              <div className="reflection-panel">
-                <div className="reflection-hero reflection-hero-final">
-                  <div className={`reflection-pokemon ${selectedMood.auraClass}`}>
+               <div className={`reflection-panel ${selectedMood.auraClass}`}>
+                 <div className={`mood-card pokedex-frame ${selectedMood.auraClass} reflection-pokemon-hero reflection-pokemon-hero-centered`}>
+                  <span className="mood-card-power" aria-hidden="true">
+                    <span className="mood-card-power-text">{selectedMood.pokemonPower}</span>
+                    {selectedMood.powerIcon && <span aria-hidden="true">{selectedMood.powerIcon}</span>}
+                  </span>
+                  <div className={`companion-sprite-wrap mood-card-sprite ${selectedMood.auraClass}`}>
                     <img
-                      className="reflection-pokemon-sprite"
+                      className="companion-sprite"
                       src={selectedMood.sprite}
-                      alt={`${selectedMood.pokemonName} summary sprite`}
+                      alt={`${selectedMood.pokemonName} animated pixel companion`}
                     />
                   </div>
                   <div className="reflection-hero-copy">
                     <strong>{selectedMood.pokemonName}</strong>
-                    <span>{selectedMood.pokemonPower}</span>
-                    <p>{selectedActivity}</p>
+                    <p>{selectedMood.tone}</p>
                   </div>
                 </div>
 
@@ -672,33 +738,25 @@ function App() {
                     <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
                   </div>
                   <div className="summary-card summary-card-wide">
-                    <span>What you noticed</span>
-                    <textarea
-                      className="noticed-input"
-                      rows="3"
-                      value={noticedText}
-                      onChange={(event) => setNoticedText(event.target.value)}
-                      placeholder={selectedMood.noticed}
-                      aria-label="What you noticed"
-                    />
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Remember</span>
-                    <strong>{selectedMood.reminder}</strong>
+                    <span>Energy</span>
+                    <strong>{energyLabel}</strong>
                   </div>
                   <div className="summary-card summary-card-wide">
                     <span>Your chosen action</span>
                     <strong>{selectedActivity}</strong>
                   </div>
                   <div className="summary-card summary-card-wide">
-                    <span>Energy</span>
-                    <strong>{energyLabel}</strong>
+                    <span>Journal</span>
+                    <textarea
+                      className="noticed-input"
+                      rows="3"
+                      value={noticedText}
+                      onChange={(event) => setNoticedText(event.target.value)}
+                      placeholder={selectedMood.noticed}
+                      aria-label="Journal"
+                    />
                   </div>
                 </div>
-
-                <p className="reflection-note">
-                  {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
-                </p>
 
                 <div className="step-nav step-nav-single-left">
                   <button type="button" className="step-button" onClick={() => goToStep(stepConfig.reflection.previous)}>
@@ -716,97 +774,86 @@ function App() {
             </section>
           )}
 
-          {currentStep === 'mooddex' && hasPickedActivity && (
+           {currentStep === 'mooddex' && hasPickedActivity && (
             <section className="card mooddex-stage" aria-labelledby="mooddex-heading">
-              <div className="mooddex-copy">
+               <div className="mooddex-copy">
                 <p className="mooddex-notice">Your daily encounter has been recorded.</p>
                 <h2 id="mooddex-heading" className="mooddex-title">
                   MoodDex Entry #{selectedMood.dexNumber}
                 </h2>
-                <p className="mooddex-encounter">Today's Encounter:</p>
               </div>
 
-              <div className="mooddex-entry">
-                <div className="mooddex-hero">
-                  <div className={`mooddex-pokemon ${selectedMood.auraClass}`}>
-                    <img
-                      className="mooddex-pokemon-sprite"
-                      src={selectedMood.sprite}
-                      alt={`${selectedMood.pokemonName} MoodDex sprite`}
-                    />
-                  </div>
-                  <div className="mooddex-hero-copy">
-                    <strong>{selectedMood.emoji} {selectedMood.label} Mood</strong>
-                    <span>Type: {selectedMood.type}</span>
-                    <p>{selectedMood.dexDescription}</p>
+               <div className="pokedex-device">
+                <div className="pokedex-led" aria-hidden="true">
+                  <span className="pokedex-led-dot red" />
+                  <span className="pokedex-led-dot yellow" />
+                  <span className="pokedex-led-dot green" />
+                </div>
+
+                <div className="pokedex-screen">
+                  <div className="mooddex-entry">
+                    <div className={`mooddex-hero mooddex-hero-centered`}>
+                      <div className={`mooddex-pokemon ${selectedMood.auraClass}`}>
+                        <img
+                          className="mooddex-pokemon-sprite"
+                          src={selectedMood.sprite}
+                          alt={`${selectedMood.pokemonName} MoodDex sprite`}
+                        />
+                      </div>
+                      <div className="mooddex-hero-copy">
+                        <strong>{selectedMood.pokemonName}</strong>
+                      </div>
+                    </div>
+
+                    <div className="mooddex-summary">
+                      <div className="summary-card summary-card-wide">
+                        <span>Today's mood</span>
+                        <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
+                      </div>
+                      <div className="summary-card summary-card-wide">
+                        <span>Energy</span>
+                        <strong>{energyLabel}</strong>
+                      </div>
+                      <div className="summary-card summary-card-wide">
+                        <span>Your chosen action</span>
+                        <strong>{selectedActivity}</strong>
+                      </div>
+                      <div className="summary-card summary-card-wide">
+                        <span>Journal</span>
+                        <textarea
+                          className="noticed-input"
+                          rows="3"
+                          value={noticedText}
+                          onChange={(event) => setNoticedText(event.target.value)}
+                          placeholder={selectedMood.noticed}
+                          aria-label="Journal"
+                          readOnly={!noticedText}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mooddex-summary">
+                      <div className="summary-card summary-card-wide">
+                        <span>Remember</span>
+                        <strong>{selectedMood.reminder}</strong>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mooddex-summary">
-                  <div className="summary-card summary-card-wide">
-                    <span>Today's mood</span>
-                    <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>What you noticed</span>
-                    <strong>{noticedText || selectedMood.noticed}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Remember</span>
-                    <strong>{selectedMood.reminder}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Your chosen action</span>
-                    <strong>{selectedActivity}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Energy</span>
-                    <strong>{energyLabel}</strong>
-                  </div>
+                <div className="pokedex-badge" aria-label={`MoodDex entry ${selectedMood.dexNumber}`}>
+                  #{selectedMood.dexNumber} Recorded
                 </div>
 
-                <div className="mooddex-trainer-notes">
-                  <h3>Trainer Notes:</h3>
-                  <blockquote>"{selectedMood.reminder}"</blockquote>
-                </div>
-
-                {showJournal && (
-                  <div className="mooddex-journal">
-                    <label htmlFor="mooddex-journal-input">Add a journal entry:</label>
-                    <textarea
-                      id="mooddex-journal-input"
-                      rows="4"
-                      value={journalText}
-                      onChange={(event) => setJournalText(event.target.value)}
-                      placeholder="Write your thoughts about this encounter..."
-                    />
-                  </div>
-                )}
-
-                <div className="mooddex-actions">
-                  <button
-                    type="button"
-                    className="step-button"
-                    onClick={() => setShowJournal((current) => !current)}
-                  >
-                    {showJournal ? 'Close journal' : '📖 Add a journal entry'}
-                  </button>
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => {
-                      setConfirmedMoodId('');
-                      setHasChosenEnergy(false);
-                      setSelectedActivity('');
-                      setNoticedText('');
-                      setCurrentStep('mood');
-                      setJournalText('');
-                      setShowJournal(false);
-                    }}
-                  >
-                    🏠
-                  </button>
-                </div>
+                 <div className="mooddex-actions">
+                   <button
+                     type="button"
+                     className="step-button step-button-primary pokedex-button"
+                     onClick={completeCheckIn}
+                   >
+                     🏠
+                   </button>
+                 </div>
               </div>
             </section>
           )}
