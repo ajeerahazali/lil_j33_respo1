@@ -5,10 +5,13 @@ const moods = [
     id: 'sad',
     label: 'Sad',
     emoji: '😔',
-    tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
-    themeClass: 'theme-sad',
-    pokemonName: 'Cubone',
-    pokemonPower: 'soft rain power',
+  tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
+  themeClass: 'theme-sad',
+  pokemonName: 'Cubone',
+  pokemonPower: 'soft rain power',
+  type: 'Water',
+  dexNumber: '104',
+  dexDescription: 'A quiet moment has been observed.',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif',
     auraClass: 'pokemon-sad',
@@ -19,10 +22,13 @@ const moods = [
     id: 'angry',
     label: 'Angry',
     emoji: '😠',
-    tone: 'Charizard matches strong heat and helps turn it into a clearer direction.',
-    themeClass: 'theme-angry',
-    pokemonName: 'Charizard',
-    pokemonPower: 'steady flame power',
+  tone: 'Charizard matches strong heat and helps turn it into a clearer direction.',
+  themeClass: 'theme-angry',
+  pokemonName: 'Charizard',
+  pokemonPower: 'steady flame power',
+  type: 'Fire',
+  dexNumber: '006',
+  dexDescription: 'Strong feelings can be real without leading the whole day.',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif',
     auraClass: 'pokemon-angry',
@@ -33,10 +39,13 @@ const moods = [
     id: 'happy',
     label: 'Happy',
     emoji: '🙂',
-    tone: 'Pikachu suits a bright mood and keeps that energy playful but steady.',
-    themeClass: 'theme-happy',
-    pokemonName: 'Pikachu',
-    pokemonPower: 'bright spark power',
+  tone: 'Pikachu suits a bright mood and keeps that energy playful but steady.',
+  themeClass: 'theme-happy',
+  pokemonName: 'Pikachu',
+  pokemonPower: 'bright spark power',
+  type: 'Electric',
+  dexNumber: '025',
+  dexDescription: 'A good moment grows stronger when you notice it clearly.',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif',
     auraClass: 'pokemon-happy',
@@ -47,10 +56,13 @@ const moods = [
     id: 'anxious',
     label: 'Anxious',
     emoji: '😟',
-    tone: 'Psyduck fits a restless mind and brings things back toward rhythm.',
-    themeClass: 'theme-anxious',
-    pokemonName: 'Psyduck',
-    pokemonPower: 'ripple focus power',
+  tone: 'Psyduck fits a restless mind and brings things back toward rhythm.',
+  themeClass: 'theme-anxious',
+  pokemonName: 'Psyduck',
+  pokemonPower: 'ripple focus power',
+  type: 'Psychic',
+  dexNumber: '054',
+  dexDescription: 'An uneasy moment is only one part of a much larger story.',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/54.gif',
     auraClass: 'pokemon-anxious',
@@ -146,7 +158,7 @@ const weatherCodeLabels = {
 const defaultView = {
   label: 'No mood yet',
   emoji: '🌱',
-  tone: 'Choose the Pokemon that feels closest to your mood right now.',
+  tone: 'Choose the companion that best represents your current state.',
   themeClass: 'theme-neutral',
   pokemonName: 'Waiting guide',
   pokemonPower: 'unopened path',
@@ -215,6 +227,8 @@ function App() {
   const [noticedText, setNoticedText] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
   const [soundOpen, setSoundOpen] = useState(false);
+  const [journalText, setJournalText] = useState('');
+  const [showJournal, setShowJournal] = useState(false);
   const [weatherState, setWeatherState] = useState({
     status: 'loading',
     data: null,
@@ -360,7 +374,8 @@ function App() {
     mood: { previous: null, next: 'energy', canContinue: hasPickedMood },
     energy: { previous: 'mood', next: 'activity', canContinue: hasChosenEnergy },
     activity: { previous: 'energy', next: 'reflection', canContinue: hasPickedActivity },
-    reflection: { previous: 'activity', next: null, canContinue: false },
+    reflection: { previous: 'activity', next: 'mooddex', canContinue: hasPickedActivity },
+    mooddex: { previous: null, next: null, canContinue: true },
   };
 
   const goToStep = (step) => {
@@ -718,6 +733,95 @@ function App() {
                     }}
                   >
                     log another
+                  </button>
+                  <button
+                    type="button"
+                    className="step-button step-button-primary"
+                    onClick={() => {
+                      setCurrentStep('mooddex');
+                    }}
+                  >
+                    View MoodDex
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {currentStep === 'mooddex' && hasPickedActivity && (
+            <section className="card mooddex-stage" aria-labelledby="mooddex-heading">
+              <div className="mooddex-copy">
+                <p className="mooddex-notice">Your daily encounter has been recorded.</p>
+                <h2 id="mooddex-heading" className="mooddex-title">
+                  MoodDex Entry #{selectedMood.dexNumber}
+                </h2>
+                <p className="mooddex-encounter">Today's Encounter:</p>
+              </div>
+
+              <div className="mooddex-entry">
+                <div className="mooddex-hero">
+                  <div className={`mooddex-pokemon ${selectedMood.auraClass}`}>
+                    <img
+                      className="mooddex-pokemon-sprite"
+                      src={selectedMood.sprite}
+                      alt={`${selectedMood.pokemonName} MoodDex sprite`}
+                    />
+                  </div>
+                  <div className="mooddex-hero-copy">
+                    <strong>{selectedMood.emoji} {selectedMood.label} Mood</strong>
+                    <span>Type: {selectedMood.type}</span>
+                    <p>{selectedMood.dexDescription}</p>
+                  </div>
+                </div>
+
+                <div className="mooddex-trainer-notes">
+                  <h3>Trainer Notes:</h3>
+                  <blockquote>"{selectedMood.reminder}"</blockquote>
+                </div>
+
+                {showJournal && (
+                  <div className="mooddex-journal">
+                    <label htmlFor="mooddex-journal-input">Add a journal entry:</label>
+                    <textarea
+                      id="mooddex-journal-input"
+                      rows="4"
+                      value={journalText}
+                      onChange={(event) => setJournalText(event.target.value)}
+                      placeholder="Write your thoughts about this encounter..."
+                    />
+                  </div>
+                )}
+
+                <div className="mooddex-actions">
+                  <button
+                    type="button"
+                    className="step-button"
+                    onClick={() => setShowJournal((current) => !current)}
+                  >
+                    {showJournal ? 'Close journal' : '📖 Add a journal entry'}
+                  </button>
+                  <button
+                    type="button"
+                    className="step-button"
+                    onClick={() => setShowJournal(false)}
+                  >
+                    🔍 View your MoodDex
+                  </button>
+                  <button
+                    type="button"
+                    className="step-button step-button-primary"
+                    onClick={() => {
+                      setConfirmedMoodId('');
+                      setHasChosenEnergy(false);
+                      setSelectedActivity('');
+                      setNoticedText('');
+                      setIsCompleted(false);
+                      setCurrentStep('mood');
+                      setJournalText('');
+                      setShowJournal(false);
+                    }}
+                  >
+                    🌱 Continue your journey
                   </button>
                 </div>
               </div>

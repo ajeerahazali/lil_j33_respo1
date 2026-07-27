@@ -247,6 +247,13 @@ h2 {
   text-align: center;
 }
 
+#mood-picker-heading {
+  font-size: 1.45rem;
+  line-height: 1.35;
+  max-width: 64ch;
+  margin: 0 auto;
+}
+
 .trainer-greeting {
   margin: 0;
   font-family: 'Plus Jakarta Sans', Arial, sans-serif;
@@ -759,6 +766,150 @@ h2 {
   background:
     radial-gradient(circle at top left, rgba(224, 242, 254, 0.22), transparent 26%),
     linear-gradient(160deg, #1d4ed8 0%, #0ea5e9 46%, #67e8f9 100%);
+}
+
+.mooddex-stage {
+  padding: 32px;
+}
+
+.mooddex-copy {
+  display: grid;
+  gap: 10px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.mooddex-notice {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.08rem;
+}
+
+.mooddex-title {
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.mooddex-encounter {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+}
+
+.mooddex-entry {
+  display: grid;
+  gap: 16px;
+}
+
+.mooddex-hero {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.mooddex-pokemon {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+}
+
+.mooddex-pokemon-sprite {
+  width: 120px;
+  height: 120px;
+  image-rendering: pixelated;
+}
+
+.mooddex-hero-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.mooddex-hero-copy strong {
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  font-size: 1.2rem;
+  color: var(--text-main);
+}
+
+.mooddex-hero-copy span {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.mooddex-hero-copy p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1rem;
+}
+
+.mooddex-trainer-notes {
+  background: color-mix(in srgb, var(--surface-soft) 72%, transparent);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.mooddex-trainer-notes h3 {
+  margin: 0 0 8px;
+  font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.mooddex-trainer-notes blockquote {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.mooddex-journal {
+  display: grid;
+  gap: 8px;
+  background: color-mix(in srgb, var(--surface-soft) 72%, transparent);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.mooddex-journal label {
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.mooddex-journal textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--text-main);
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.5;
+  font: inherit;
+}
+
+.mooddex-journal textarea::placeholder {
+  color: var(--text-soft);
+}
+
+.mooddex-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 @keyframes section-enter {
