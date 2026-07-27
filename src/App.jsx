@@ -4,26 +4,54 @@ const moods = [
   {
     id: 'sad',
     label: 'Sad',
-    tone: 'Keep things gentle and simple.',
+    tone: 'The quiet heart is still welcome here.',
     themeClass: 'theme-sad',
+    pokemonName: 'Crying Cubone',
+    pokemonPower: 'soft rain power',
+    sprite:
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif',
+    auraClass: 'pokemon-sad',
+    welcome:
+      'Cubone stays beside sorrow without rushing it away. Let the feeling be named, and the next step will come gently.',
   },
   {
-    id: 'overwhelmed',
-    label: 'Overwhelmed',
-    tone: 'Take one small step.',
-    themeClass: 'theme-overwhelmed',
+    id: 'angry',
+    label: 'Angry',
+    tone: 'Even fire can be guided into a clear path.',
+    themeClass: 'theme-angry',
+    pokemonName: 'Charizard',
+    pokemonPower: 'steady flame power',
+    sprite:
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif',
+    auraClass: 'pokemon-angry',
+    welcome:
+      'Charizard teaches strong energy to breathe before it burns. Strength becomes clearer when it is held with care.',
   },
   {
-    id: 'uneasy',
-    label: 'Uneasy',
-    tone: 'Ground yourself in the present moment.',
-    themeClass: 'theme-uneasy',
+    id: 'happy',
+    label: 'Happy',
+    tone: 'Warm light can be shared without losing its glow.',
+    themeClass: 'theme-happy',
+    pokemonName: 'Pikachu',
+    pokemonPower: 'bright spark power',
+    sprite:
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif',
+    auraClass: 'pokemon-happy',
+    welcome:
+      'Pikachu keeps joy playful and bright. Let this good energy move with purpose, not hurry.',
   },
   {
-    id: 'steady',
-    label: 'Steady',
-    tone: 'Keep that calm feeling going.',
-    themeClass: 'theme-steady',
+    id: 'anxious',
+    label: 'Anxious',
+    tone: 'A restless mind can still be led back to shore.',
+    themeClass: 'theme-anxious',
+    pokemonName: 'Psyduck',
+    pokemonPower: 'ripple focus power',
+    sprite:
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/54.gif',
+    auraClass: 'pokemon-anxious',
+    welcome:
+      'Psyduck knows the noise of a crowded mind. With patience, even swirling thoughts can settle into rhythm.',
   },
 ];
 
@@ -33,20 +61,20 @@ const activityMap = {
     medium: ['Write one kind sentence to yourself', 'Play one gentle song', 'Stretch your arms and hands'],
     high: ['Take a short outside walk', 'Message yourself one hopeful note', 'Tidy one small area nearby'],
   },
-  overwhelmed: {
+  angry: {
     low: ['Sit quietly for two minutes', 'Loosen your shoulders', 'Sip a glass of water'],
-    medium: ['Take five slow breaths', 'Write one worry on paper', 'Stretch your neck and hands'],
+    medium: ['Take five slow breaths', 'Write one strong feeling on paper', 'Stretch your neck and hands'],
     high: ['Walk around the room', 'Do a one-minute shake-out', 'Name five things you can see'],
   },
-  uneasy: {
-    low: ['Hold something warm', 'Count five slow breaths', 'Read a short calming line'],
-    medium: ['Name three sounds around you', 'Relax your jaw and hands', 'Press your feet into the floor'],
-    high: ['Do box breathing for one minute', 'Walk slowly for thirty seconds', 'Look around and name colors'],
-  },
-  steady: {
+  happy: {
     low: ['Stay still for a calm minute', 'Notice one thing going well', 'Keep breathing slowly'],
     medium: ['Write one kind note to yourself', 'Take a short stretch break', 'Choose your next small step'],
     high: ['Take a short energizing walk', 'Play one calming song', 'Tidy one small spot nearby'],
+  },
+  anxious: {
+    low: ['Hold something warm', 'Count five slow breaths', 'Read a short calming line'],
+    medium: ['Name three sounds around you', 'Relax your jaw and hands', 'Press your feet into the floor'],
+    high: ['Do box breathing for one minute', 'Walk slowly for thirty seconds', 'Look around and name colors'],
   },
 };
 
@@ -64,7 +92,7 @@ const activityQuotes = {
   'Loosen your shoulders': 'Your body can help tell your mind it is safe to ease up.',
   'Sip a glass of water': 'Care can start with one basic step.',
   'Take five slow breaths': 'You do not have to solve everything in this minute.',
-  'Write one worry on paper': 'Naming a worry can make it feel less tangled.',
+  'Write one strong feeling on paper': 'Naming the fire can help it cool into clarity.',
   'Stretch your neck and hands': 'Release often begins in small places.',
   'Walk around the room': 'Motion can help break the grip of stress.',
   'Do a one-minute shake-out': 'You can let some tension leave your body.',
@@ -88,82 +116,6 @@ const activityQuotes = {
   'Play one calming song': 'Let one calm thing shape the next few minutes.',
   'Tidy one small spot nearby': 'Order in one small place can create ease around you.',
 };
-
-const pikachuSprite =
-  'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif';
-
-const pikachuChoicesByMood = {
-  sad: [
-    {
-      id: 'rain-listener',
-      name: 'Rain Listener Pikachu',
-      power: 'soft cloud power',
-      auraClass: 'pikachu-rain-listener',
-      line: 'A quiet Pikachu that absorbs heavy feelings and turns them into gentler breaths.',
-    },
-    {
-      id: 'lamp-keeper',
-      name: 'Lamp Keeper Pikachu',
-      power: 'small light power',
-      auraClass: 'pikachu-lamp-keeper',
-      line: 'A warm Pikachu that keeps one calm light on, even when the room inside feels dim.',
-    },
-  ],
-  overwhelmed: [
-    {
-      id: 'anchor-tail',
-      name: 'Anchor Tail Pikachu',
-      power: 'steady ground power',
-      auraClass: 'pikachu-anchor-tail',
-      line: 'This Pikachu gathers scattered sparks and grounds them into one clear next step.',
-    },
-    {
-      id: 'shield-spark',
-      name: 'Shield Spark Pikachu',
-      power: 'protective spark power',
-      auraClass: 'pikachu-shield-spark',
-      line: 'A strong Pikachu that lowers the noise around you so your breath can lead again.',
-    },
-  ],
-  uneasy: [
-    {
-      id: 'focus-bolt',
-      name: 'Focus Bolt Pikachu',
-      power: 'clear mind power',
-      auraClass: 'pikachu-focus-bolt',
-      line: 'A bright Pikachu that turns restless energy into one clean line of attention.',
-    },
-    {
-      id: 'pulse-guide',
-      name: 'Pulse Guide Pikachu',
-      power: 'rhythm power',
-      auraClass: 'pikachu-pulse-guide',
-      line: 'This Pikachu keeps a steady inner rhythm when your thoughts try to race ahead.',
-    },
-  ],
-  steady: [
-    {
-      id: 'sunrise-spark',
-      name: 'Sunrise Spark Pikachu',
-      power: 'warm firelight power',
-      auraClass: 'pikachu-sunrise-spark',
-      line: 'A golden Pikachu that carries calm confidence into the next good step.',
-    },
-    {
-      id: 'trailblaze-tail',
-      name: 'Trailblaze Tail Pikachu',
-      power: 'forward-motion power',
-      auraClass: 'pikachu-trailblaze-tail',
-      line: 'This Pikachu holds steady energy and points it gently toward action.',
-    },
-  ],
-};
-
-function getEnergyBand(energy) {
-  if (energy <= 3) return 'low';
-  if (energy <= 7) return 'medium';
-  return 'high';
-}
 
 const weatherCodeLabels = {
   0: 'Clear sky',
@@ -189,44 +141,91 @@ const weatherCodeLabels = {
 
 const defaultView = {
   label: 'No mood yet',
-  tone: 'Start here by choosing the mood that fits you best right now.',
+  tone: 'Welcome. Choose the mood that is true for this moment.',
   themeClass: 'theme-neutral',
+  pokemonName: 'Waiting guide',
+  pokemonPower: 'unopened path',
+  auraClass: 'pokemon-neutral',
+  welcome: 'When the feeling is named, the path will reveal its next question.',
 };
 
+const energyOptions = [
+  {
+    id: 'low',
+    label: 'Low energy',
+    emoji: '😴',
+    helper: 'Need softness',
+    value: 2,
+  },
+  {
+    id: 'medium',
+    label: 'Medium energy',
+    emoji: '🙂',
+    helper: 'Can do a little',
+    value: 5,
+  },
+  {
+    id: 'high',
+    label: 'High energy',
+    emoji: '⚡',
+    helper: 'Ready to move',
+    value: 9,
+  },
+];
+
+function getEnergyBand(energy) {
+  if (energy <= 3) return 'low';
+  if (energy <= 7) return 'medium';
+  return 'high';
+}
+
 function App() {
-  const [selectedMoodId, setSelectedMoodId] = useState('');
+  const [selectedMoodIndex, setSelectedMoodIndex] = useState(0);
+  const [confirmedMoodId, setConfirmedMoodId] = useState('');
   const [energy, setEnergy] = useState(5);
   const [selectedActivity, setSelectedActivity] = useState('');
-  const [selectedPikachuId, setSelectedPikachuId] = useState('');
-  const [pikachuIndex, setPikachuIndex] = useState(0);
+  const [colorMode, setColorMode] = useState('light');
   const [weatherState, setWeatherState] = useState({
     status: 'loading',
     data: null,
     error: '',
   });
 
-  const selectedMood = moods.find((mood) => mood.id === selectedMoodId) ?? defaultView;
+  const currentMood = moods[selectedMoodIndex] ?? moods[0] ?? defaultView;
+  const selectedMood = moods.find((mood) => mood.id === confirmedMoodId) ?? defaultView;
+  const hasPickedMood = confirmedMoodId !== '';
   const energyBand = getEnergyBand(energy);
-  const hasPickedMood = selectedMoodId !== '';
-  const hasPickedPikachu = selectedPikachuId !== '';
   const hasPickedActivity = selectedActivity !== '';
-  const pikachuChoices = hasPickedMood ? pikachuChoicesByMood[selectedMoodId] ?? [] : [];
-  const currentPikachu = pikachuChoices[pikachuIndex] ?? null;
-  const selectedPikachu = pikachuChoices.find((choice) => choice.id === selectedPikachuId) ?? null;
 
   const activities = useMemo(() => {
-    if (!hasPickedMood || !hasPickedPikachu) {
+    if (!hasPickedMood) {
       return [];
     }
 
-    return activityMap[selectedMoodId]?.[energyBand] ?? [];
-  }, [selectedMoodId, energyBand, hasPickedMood, hasPickedPikachu]);
+    return activityMap[confirmedMoodId]?.[energyBand] ?? [];
+  }, [confirmedMoodId, energyBand, hasPickedMood]);
 
   const energyLabel = useMemo(() => {
     if (energyBand === 'low') return 'Low energy';
     if (energyBand === 'medium') return 'Medium energy';
     return 'High energy';
   }, [energyBand]);
+
+  const selectedEnergyOption = useMemo(() => {
+    return energyOptions.find((option) => option.id === energyBand) ?? energyOptions[1];
+  }, [energyBand]);
+
+  const selectedQuote = useMemo(() => {
+    if (!selectedActivity) return '';
+
+    return activityQuotes[selectedActivity] || 'One kind step is enough for right now.';
+  }, [selectedActivity]);
+
+  const weatherSummary = useMemo(() => {
+    if (!weatherState.data) return '';
+
+    return weatherCodeLabels[weatherState.data.weatherCode] || 'Current weather';
+  }, [weatherState.data]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -278,22 +277,20 @@ function App() {
     return () => controller.abort();
   }, []);
 
-  const weatherSummary = useMemo(() => {
-    if (!weatherState.data) return '';
+  const handlePreviousMood = () => {
+    setConfirmedMoodId('');
+    setSelectedActivity('');
+    setSelectedMoodIndex((currentIndex) => (currentIndex - 1 + moods.length) % moods.length);
+  };
 
-    return weatherCodeLabels[weatherState.data.weatherCode] || 'Current weather';
-  }, [weatherState.data]);
+  const handleNextMood = () => {
+    setConfirmedMoodId('');
+    setSelectedActivity('');
+    setSelectedMoodIndex((currentIndex) => (currentIndex + 1) % moods.length);
+  };
 
-  const selectedQuote = useMemo(() => {
-    if (!selectedActivity) return '';
-
-    return activityQuotes[selectedActivity] || 'One kind step is enough for right now.';
-  }, [selectedActivity]);
-
-  const handleMoodChange = (moodId) => {
-    setSelectedMoodId(moodId);
-    setSelectedPikachuId('');
-    setPikachuIndex(0);
+  const handleChooseMood = () => {
+    setConfirmedMoodId(currentMood.id);
     setSelectedActivity('');
   };
 
@@ -302,160 +299,136 @@ function App() {
     setSelectedActivity('');
   };
 
-  const handlePreviousPikachu = () => {
-    if (!pikachuChoices.length) {
-      return;
-    }
-
-    setSelectedPikachuId('');
-    setSelectedActivity('');
-    setPikachuIndex((currentIndex) => (currentIndex - 1 + pikachuChoices.length) % pikachuChoices.length);
-  };
-
-  const handleNextPikachu = () => {
-    if (!pikachuChoices.length) {
-      return;
-    }
-
-    setSelectedPikachuId('');
-    setSelectedActivity('');
-    setPikachuIndex((currentIndex) => (currentIndex + 1) % pikachuChoices.length);
-  };
-
-  const handleChoosePikachu = () => {
-    if (!currentPikachu) {
-      return;
-    }
-
-    setSelectedPikachuId(currentPikachu.id);
+  const handleEnergyCardPick = (value) => {
+    setEnergy(value);
     setSelectedActivity('');
   };
 
   return (
-    <main className={`app-shell ${selectedMood.themeClass}`}>
+    <main className={`app-shell ${selectedMood.themeClass} ${colorMode === 'dark' ? 'mode-dark' : 'mode-light'}`}>
       <div className="app-frame">
-        <header className="hero card">
-          <div className="hero-layout">
-            <div className="hero-copy-block">
-              <p className="eyebrow">Mood Reset</p>
-              <h1>Welcome, traveler. Place your thoughts down gently, and enter one calm step at a time.</h1>
-              <p className="hero-copy">
-                First choose your mood. Then choose the Pikachu guide that best carries that feeling.
-                Only then will the next question rise.
-              </p>
+        <aside className="weather-widget" aria-live="polite">
+          <div className="weather-widget-head">
+            <div>
+              <h2 className="weather-widget-title">Live Weather</h2>
+              <span className="weather-widget-badge">Live now</span>
             </div>
-
-            <aside className="companion-card" aria-live="polite">
-              <p className="activity-tag">8-bit Pikachu guide</p>
-
-              {currentPikachu ? (
-                <>
-                  <div className={`companion-sprite-wrap ${currentPikachu.auraClass}`}>
-                    <img
-                      className="companion-sprite"
-                      src={pikachuSprite}
-                      alt={`${currentPikachu.name} animated pixel companion`}
-                    />
-                  </div>
-                  <div className="pikachu-nav" aria-label="Choose a Pikachu guide">
-                    <button
-                      type="button"
-                      className="pixel-arrow pixel-arrow-left"
-                      onClick={handlePreviousPikachu}
-                      aria-label="Previous Pikachu"
-                    >
-                      <span aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      className="pixel-choice-button"
-                      onClick={handleChoosePikachu}
-                    >
-                      {selectedPikachuId === currentPikachu.id ? 'Chosen guide' : 'Choose this Pikachu'}
-                    </button>
-                    <button
-                      type="button"
-                      className="pixel-arrow pixel-arrow-right"
-                      onClick={handleNextPikachu}
-                      aria-label="Next Pikachu"
-                    >
-                      <span aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="companion-copy">
-                    <strong>{currentPikachu.name}</strong>
-                    <span>{currentPikachu.power}</span>
-                    <p>{currentPikachu.line}</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="companion-sprite-wrap companion-sprite-empty" aria-hidden="true">
-                    <div className="pixel-orb" />
-                  </div>
-                  <div className="companion-copy">
-                    <strong>Choose your mood first</strong>
-                    <span>The guide will follow</span>
-                    <p>Once your mood is chosen below, a Pikachu guide will appear here for you to select.</p>
-                  </div>
-                </>
-              )}
-            </aside>
-          </div>
-        </header>
-
-        <section className="card section-grid" aria-labelledby="mood-picker-heading">
-          <div className="section-copy">
-            <p className="section-label">Section 1</p>
-            <h2 id="mood-picker-heading">Mood Picker</h2>
-            <p>{selectedMood.tone}</p>
+            <button
+              type="button"
+              className="mode-toggle"
+              onClick={() => setColorMode((currentMode) => (currentMode === 'light' ? 'dark' : 'light'))}
+              aria-label="Toggle light and dark mode"
+            >
+              {colorMode === 'light' ? 'Dark' : 'Light'} mode
+            </button>
           </div>
 
-          <div className="controls-panel">
-            <div className="mood-list" role="radiogroup" aria-label="Choose your mood">
-              {moods.map((mood) => {
-                const isSelected = mood.id === selectedMoodId;
+          {weatherState.status === 'loading' && <p className="weather-widget-message">Loading...</p>}
 
-                return (
-                  <button
-                    key={mood.id}
-                    type="button"
-                    className={`mood-button ${isSelected ? 'selected' : ''}`}
-                    aria-pressed={isSelected}
-                    onClick={() => handleMoodChange(mood.id)}
-                  >
-                    <span className="mood-button-label">{mood.label}</span>
-                    <span className="mood-button-copy">
-                      {isSelected ? 'Page theme is active now' : 'Switch the page to this mood'}
-                    </span>
-                  </button>
-                );
-              })}
+          {weatherState.status === 'error' && (
+            <p className="weather-widget-message weather-error">Unavailable right now</p>
+          )}
+
+          {weatherState.status === 'ready' && weatherState.data && (
+            <div className="weather-widget-grid">
+              <div>
+                <span>Location</span>
+                <strong>Kuala Lumpur</strong>
+              </div>
+              <div>
+                <span>Condition</span>
+                <strong>{weatherSummary}</strong>
+              </div>
+              <div>
+                <span>Temperature</span>
+                <strong>{weatherState.data.temperature} C</strong>
+              </div>
+            </div>
+          )}
+        </aside>
+
+        <section className="card mood-stage" aria-labelledby="mood-picker-heading">
+          <div className="mood-stage-copy">
+            <h1 id="mood-picker-heading">
+              Welcome, traveler. Name the weather within, then choose the guide that matches its
+              power.
+            </h1>
+            <p className="hero-copy">The path opens one calm step at a time.</p>
+            <p className="mood-tone">{currentMood.tone}</p>
+            <p className="mood-welcome">{currentMood.welcome}</p>
+          </div>
+
+          <div className="mood-stage-panel">
+            <div className={`companion-sprite-wrap ${currentMood.auraClass}`}>
+              <img
+                className="companion-sprite"
+                src={currentMood.sprite}
+                alt={`${currentMood.pokemonName} animated pixel companion`}
+              />
             </div>
 
-            {hasPickedPikachu && selectedPikachu && (
-              <label className="slider-wrap" htmlFor="energy-slider">
-                <span>Energy level for {selectedPikachu.name}: {energyLabel}</span>
-                <input
-                  id="energy-slider"
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={energy}
-                  onChange={handleEnergyChange}
-                />
-                <small>Now that you chose your Pikachu guide, match the slider to your energy right now.</small>
-              </label>
+            <div className="pikachu-nav" aria-label="Choose a mood guide">
+              <button
+                type="button"
+                className="pixel-arrow pixel-arrow-left"
+                onClick={handlePreviousMood}
+                aria-label="Previous mood"
+              >
+                <span aria-hidden="true" />
+              </button>
+              <button type="button" className="pixel-choice-button" onClick={handleChooseMood}>
+                {confirmedMoodId === currentMood.id ? 'Chosen mood' : `Choose ${currentMood.label}`}
+              </button>
+              <button
+                type="button"
+                className="pixel-arrow pixel-arrow-right"
+                onClick={handleNextMood}
+                aria-label="Next mood"
+              >
+                <span aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="companion-copy">
+              <strong>{currentMood.pokemonName}</strong>
+              <span>{currentMood.pokemonPower}</span>
+              <p>{confirmedMoodId === currentMood.id ? 'This guide has been chosen for your path.' : 'Use the arrow buttons to explore, then choose the guide that fits your feeling.'}</p>
+            </div>
+
+            {hasPickedMood && (
+              <div className="slider-wrap section-reveal" aria-label="Choose your energy level">
+                <span>Energy level</span>
+                <div className="energy-card-grid">
+                  {energyOptions.map((option) => {
+                    const isSelected = option.id === selectedEnergyOption.id;
+
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        className={`energy-card ${isSelected ? 'selected' : ''}`}
+                        onClick={() => handleEnergyCardPick(option.value)}
+                      >
+                        <span className="energy-emoji" aria-hidden="true">
+                          {option.emoji}
+                        </span>
+                        <strong>{option.label}</strong>
+                        <span>{option.helper}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <small>Choose the card that best matches your energy right now.</small>
+              </div>
             )}
           </div>
         </section>
 
-        {hasPickedPikachu && (
+        {hasPickedMood && (
           <section className="card section-grid section-reveal" aria-labelledby="activity-suggestion-heading">
             <div className="section-copy">
-              <p className="section-label">Section 2</p>
               <h2 id="activity-suggestion-heading">Activity Suggestion</h2>
-              <p>These three ideas update live based on your mood and energy.</p>
+              <p>These three ideas update live based on your chosen mood and energy.</p>
             </div>
 
             <div className="activity-list">
@@ -473,7 +446,7 @@ function App() {
                     <span className="activity-tag">Calm idea</span>
                     <strong>{activity}</strong>
                     <span>{quote}</span>
-                    <span>{isSelected ? 'Chosen for reflection' : 'Tap to choose this activity'}</span>
+                    {isSelected && <span>Chosen for reflection</span>}
                   </button>
                 );
               })}
@@ -482,70 +455,52 @@ function App() {
         )}
 
         {hasPickedActivity && (
-          <section className="card section-grid section-reveal" aria-labelledby="quick-reflection-heading">
+          <section className="card section-grid section-grid-compact section-reveal" aria-labelledby="quick-reflection-heading">
             <div className="section-copy">
-              <p className="section-label">Section 3</p>
               <h2 id="quick-reflection-heading">Quick Reflection</h2>
-              <p>See your current choices clearly. This app only shows what you picked right now.</p>
+              <p>Everything you chose is gathered here in one compact view.</p>
             </div>
 
             <div className="reflection-panel">
-              <div className="reflection-row">
-                <span>Chosen mood</span>
-                <strong>{selectedMood.label}</strong>
-              </div>
-              <div className="reflection-row">
-                <span>Energy level</span>
-                <strong>{energyLabel}</strong>
-              </div>
-              <div className="reflection-row">
-                <span>Selected activity</span>
-                <strong>{selectedActivity}</strong>
-              </div>
-              {selectedPikachu && (
-                <div className="reflection-row">
-                  <span>Chosen Pikachu</span>
-                  <strong>{selectedPikachu.name}</strong>
+              <div className="reflection-hero">
+                <div className={`reflection-pokemon ${selectedMood.auraClass}`}>
+                  <img
+                    className="reflection-pokemon-sprite"
+                    src={selectedMood.sprite}
+                    alt={`${selectedMood.pokemonName} summary sprite`}
+                  />
                 </div>
-              )}
-              <div className="reflection-row">
-                <span>Helpful quote</span>
-                <strong>{selectedQuote}</strong>
+                <div className="reflection-hero-copy">
+                  <strong>{selectedMood.pokemonName}</strong>
+                  <span>{selectedMood.pokemonPower}</span>
+                  <p>{selectedMood.welcome}</p>
+                </div>
               </div>
+
+              <div className="reflection-summary-grid">
+                <div className="summary-card">
+                  <span>Mood</span>
+                  <strong>{selectedMood.label}</strong>
+                </div>
+                <div className="summary-card">
+                  <span>Energy</span>
+                  <strong>{energyLabel}</strong>
+                </div>
+                <div className="summary-card summary-card-wide">
+                  <span>Activity</span>
+                  <strong>{selectedActivity}</strong>
+                </div>
+                <div className="summary-card summary-card-wide">
+                  <span>Helpful quote</span>
+                  <strong>{selectedQuote}</strong>
+                </div>
+              </div>
+
               <p className="reflection-note">
                 {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
               </p>
 
               <blockquote className="quote-card">"{selectedQuote}"</blockquote>
-
-              <div className="weather-card" aria-live="polite">
-                <p className="activity-tag">Live weather in Kuala Lumpur</p>
-
-                {weatherState.status === 'loading' && (
-                  <p className="weather-message">Loading current weather for your reflection section.</p>
-                )}
-
-                {weatherState.status === 'error' && (
-                  <p className="weather-message weather-error">{weatherState.error}</p>
-                )}
-
-                {weatherState.status === 'ready' && weatherState.data && (
-                  <div className="weather-details">
-                    <div className="weather-row">
-                      <span>Temperature</span>
-                      <strong>{weatherState.data.temperature} C</strong>
-                    </div>
-                    <div className="weather-row">
-                      <span>Condition</span>
-                      <strong>{weatherSummary}</strong>
-                    </div>
-                    <div className="weather-row">
-                      <span>Updated</span>
-                      <strong>{weatherState.data.time}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </section>
         )}
