@@ -181,16 +181,20 @@ const energyOptions = [
 
 const ambientTracks = {
   off: {
-    label: 'Sound off',
+    label: 'Off',
     url: '',
   },
-  calm: {
-    label: 'Calm jazz',
-    url: 'https://samplelib.com/mp3/sample-3s.mp3',
-  },
   rain: {
-    label: 'Rain sounds',
+    label: 'Rain',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  },
+  waves: {
+    label: 'Waves',
+    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  },
+  forest: {
+    label: 'Forest',
+    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
   },
 };
 
@@ -210,6 +214,7 @@ function App() {
   const [currentStep, setCurrentStep] = useState('mood');
   const [noticedText, setNoticedText] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [soundOpen, setSoundOpen] = useState(false);
   const [weatherState, setWeatherState] = useState({
     status: 'loading',
     data: null,
@@ -389,26 +394,6 @@ function App() {
             </button>
           </div>
 
-          <div className="sound-control" aria-label="Background audio control">
-            <span className="sound-control-label">Background sound</span>
-            <div className="sound-chip-row">
-              {Object.entries(ambientTracks).map(([key, track]) => {
-                const isSelected = ambientMode === key;
-
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`sound-chip ${isSelected ? 'selected' : ''}`}
-                    onClick={() => setAmbientMode(key)}
-                  >
-                    {track.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {weatherState.status === 'loading' && <p className="weather-widget-message">Loading...</p>}
 
           {weatherState.status === 'error' && (
@@ -565,17 +550,16 @@ function App() {
                     const quote = activityQuotes[activity] || 'One kind step is enough for right now.';
 
                     return (
-                      <button
-                        key={activity}
-                        type="button"
-                        className={`activity-card ${isSelected ? 'selected' : ''}`}
-                        onClick={() => setSelectedActivity(activity)}
-                      >
-                        <span className="activity-tag">Calm idea</span>
-                        <strong>{activity}</strong>
-                        <span>{quote}</span>
-                        {isSelected && <span>Chosen for reflection</span>}
-                      </button>
+                       <button
+                         key={activity}
+                         type="button"
+                         className={`activity-card ${isSelected ? 'selected' : ''}`}
+                         onClick={() => setSelectedActivity(activity)}
+                       >
+                         <strong>{activity}</strong>
+                         <span>{quote}</span>
+                         {isSelected && <span>Chosen for reflection</span>}
+                       </button>
                     );
                   })}
                 </div>
@@ -600,7 +584,7 @@ function App() {
           {currentStep === 'reflection' && hasPickedActivity && !isCompleted && (
             <section className="card section-grid section-grid-compact" aria-labelledby="quick-reflection-heading">
               <div className="section-copy">
-                <h2 id="quick-reflection-heading">Daily Check-in Complete</h2>
+                <h2 id="quick-reflection-heading">Daily Check-in Summary</h2>
                 <p>{selectedMood.emoji} You showed up for yourself today.</p>
               </div>
 
@@ -654,10 +638,6 @@ function App() {
                   {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
                 </p>
 
-                {weatherState.status === 'ready' && weatherState.data && (
-                  <p className="reflection-weather-note">Current weather note: {weatherSummary.toLowerCase()} in Kuala Lumpur.</p>
-                )}
-
                 <div className="step-nav step-nav-single-left">
                   <button type="button" className="step-button" onClick={() => goToStep(stepConfig.reflection.previous)}>
                     Back
@@ -667,7 +647,7 @@ function App() {
                     className="step-button step-button-primary"
                     onClick={() => setIsCompleted(true)}
                   >
-                    Complete mood-tracker
+                    Complete Check-in
                   </button>
                 </div>
               </div>
@@ -724,17 +704,53 @@ function App() {
                   {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
                 </p>
 
-                {weatherState.status === 'ready' && weatherState.data && (
-                  <p className="reflection-weather-note">Current weather note: {weatherSummary.toLowerCase()} in Kuala Lumpur.</p>
-                )}
-
                 <div className="step-nav step-nav-single-left">
-                  <button type="button" className="step-button" onClick={() => { setIsCompleted(false); setNoticedText(''); }}>
-                    Back to reflection
+                  <button
+                    type="button"
+                    className="step-button step-button-primary"
+                    onClick={() => {
+                      setConfirmedMoodId('');
+                      setHasChosenEnergy(false);
+                      setSelectedActivity('');
+                      setNoticedText('');
+                      setIsCompleted(false);
+                      setCurrentStep('mood');
+                    }}
+                  >
+                    log another
                   </button>
                 </div>
               </div>
             </section>
+          )}
+        </div>
+        <div className="sound-toggle-wrap">
+          <button
+            type="button"
+            className={`sound-toggle ${soundOpen ? 'open' : ''}`}
+            onClick={() => setSoundOpen((current) => !current)}
+            aria-expanded={soundOpen}
+          >
+            <span className="sound-toggle-label">{ambientMode === 'off' ? 'Sound off' : 'Sound on'}</span>
+            <span className="sound-toggle-arrow" aria-hidden="true">▾</span>
+          </button>
+          {soundOpen && (
+            <div className="sound-options" role="menu">
+              {Object.entries(ambientTracks).map(([key, track]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`sound-option ${ambientMode === key ? 'selected' : ''}`}
+                  onClick={() => {
+                    setAmbientMode(key);
+                    setSoundOpen(false);
+                  }}
+                  role="menuitem"
+                >
+                  {track.label}
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </div>
