@@ -400,25 +400,29 @@ function App() {
     <main className={`app-shell ${selectedMood.themeClass} ${colorMode === 'dark' ? 'mode-dark' : 'mode-light'}`}>
       <div className="app-frame">
         <audio ref={ambientAudioRef} aria-hidden="true" />
+      <div className="top-widgets">
+        <aside className="mode-widget" aria-label="Display mode">
+          <button
+            type="button"
+            className="mode-toggle"
+            role="switch"
+            aria-checked={colorMode === 'dark'}
+            onClick={() => setColorMode((currentMode) => (currentMode === 'light' ? 'dark' : 'light'))}
+            aria-label="Toggle light and dark mode"
+          >
+            <span className="mode-toggle-track">
+              <span className="mode-toggle-thumb" />
+            </span>
+            <span className="mode-toggle-label">{colorMode === 'dark' ? 'Dark mode' : 'Light mode'}</span>
+          </button>
+        </aside>
+
         <aside className="weather-widget" aria-live="polite">
           <div className="weather-widget-head">
             <div>
               <h2 className="weather-widget-title">Live Weather</h2>
               <span className="weather-widget-badge">Live now</span>
             </div>
-            <button
-              type="button"
-              className="mode-toggle"
-              role="switch"
-              aria-checked={colorMode === 'dark'}
-              onClick={() => setColorMode((currentMode) => (currentMode === 'light' ? 'dark' : 'light'))}
-              aria-label="Toggle light and dark mode"
-            >
-              <span className="mode-toggle-track">
-                <span className="mode-toggle-thumb" />
-              </span>
-              <span className="mode-toggle-label">{colorMode === 'dark' ? 'Dark mode' : 'Light mode'}</span>
-            </button>
           </div>
 
           {weatherState.status === 'loading' && <p className="weather-widget-message">Loading...</p>}
@@ -446,28 +450,36 @@ function App() {
           </aside>
 
           <div className="sound-widget" aria-label="Sound options">
-            <div className="sound-widget-head">
-              <div>
-                <h2 className="sound-widget-title">Sound</h2>
-              </div>
-            </div>
-            <div className="sound-chip-row">
-              {Object.entries(ambientTracks).map(([key, track]) => {
-                const isSelected = ambientMode === key;
+            <button
+              type="button"
+              className={`sound-toggle-main ${soundOpen ? 'open' : ''}`}
+              onClick={() => setSoundOpen((current) => !current)}
+              aria-expanded={soundOpen}
+            >
+              <span className="sound-toggle-icon" aria-hidden="true">🎵</span>
+              <span className="sound-toggle-label">Sound</span>
+              <span className="sound-toggle-arrow" aria-hidden="true">▾</span>
+            </button>
+            {soundOpen && (
+              <div className="sound-chip-row">
+                {Object.entries(ambientTracks).map(([key, track]) => {
+                  const isSelected = ambientMode === key;
 
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`sound-chip ${isSelected ? 'selected' : ''}`}
-                    onClick={() => setAmbientMode(key)}
-                  >
-                    {track.label}
-                  </button>
-                );
-              })}
-            </div>
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`sound-chip ${isSelected ? 'selected' : ''}`}
+                      onClick={() => setAmbientMode(key)}
+                    >
+                      {track.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
+        </div>
 
          <div className="step-frame section-reveal" key={currentStep}>
           {currentStep === 'mood' && (
@@ -588,8 +600,8 @@ function App() {
             </section>
           )}
 
-          {currentStep === 'activity' && hasPickedMood && hasChosenEnergy && (
-            <section className="card section-grid" aria-labelledby="activity-suggestion-heading">
+           {currentStep === 'activity' && hasPickedMood && hasChosenEnergy && (
+            <section className="card section-grid section-grid-compact" aria-labelledby="activity-suggestion-heading">
               <div className="section-copy">
                 <h2 id="activity-suggestion-heading">Activity Suggestion</h2>
               </div>
