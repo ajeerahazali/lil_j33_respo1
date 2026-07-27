@@ -301,6 +301,7 @@ h2 {
 }
 
 #mood-picker-heading {
+  color: var(--text-main);
   font-size: 1.25rem;
   line-height: 1.35;
   max-width: 64ch;
