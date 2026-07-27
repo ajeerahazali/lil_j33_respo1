@@ -542,6 +542,10 @@ h2 {
   align-items: center;
 }
 
+.reflection-hero-final {
+  align-items: start;
+}
+
 .reflection-pokemon {
   min-height: 112px;
   display: grid;
@@ -577,6 +581,12 @@ h2 {
   gap: 12px;
 }
 
+.reflection-summary-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
 .summary-card {
   display: grid;
   gap: 6px;
@@ -589,6 +599,21 @@ h2 {
 .summary-card span {
   color: var(--text-soft);
   font-size: 0.95rem;
+}
+
+.noticed-input {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--text-main);
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.noticed-input::placeholder {
+  color: var(--text-soft);
 }
 
 .summary-card strong {

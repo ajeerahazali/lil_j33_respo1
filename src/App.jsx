@@ -4,6 +4,7 @@ const moods = [
   {
     id: 'sad',
     label: 'Sad',
+    emoji: '😔',
     tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
     themeClass: 'theme-sad',
     pokemonName: 'Crying Cubone',
@@ -11,10 +12,13 @@ const moods = [
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif',
     auraClass: 'pokemon-sad',
+    noticed: 'You noticed heaviness and chose a gentler pace.',
+    reminder: 'A difficult day does not define your whole journey.',
   },
   {
     id: 'angry',
     label: 'Angry',
+    emoji: '😠',
     tone: 'Charizard matches strong heat and helps turn it into a clearer direction.',
     themeClass: 'theme-angry',
     pokemonName: 'Charizard',
@@ -22,10 +26,13 @@ const moods = [
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif',
     auraClass: 'pokemon-angry',
+    noticed: 'You noticed strong pressure and looked for a steadier outlet.',
+    reminder: 'Strong feelings can be real without leading the whole day.',
   },
   {
     id: 'happy',
     label: 'Happy',
+    emoji: '🙂',
     tone: 'Pikachu suits a bright mood and keeps that energy playful but steady.',
     themeClass: 'theme-happy',
     pokemonName: 'Pikachu',
@@ -33,10 +40,13 @@ const moods = [
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif',
     auraClass: 'pokemon-happy',
+    noticed: 'You noticed bright energy and gave it a calm direction.',
+    reminder: 'A good moment grows stronger when you notice it clearly.',
   },
   {
     id: 'anxious',
     label: 'Anxious',
+    emoji: '😟',
     tone: 'Psyduck fits a restless mind and brings things back toward rhythm.',
     themeClass: 'theme-anxious',
     pokemonName: 'Psyduck',
@@ -44,6 +54,8 @@ const moods = [
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/54.gif',
     auraClass: 'pokemon-anxious',
+    noticed: 'You noticed restless thoughts and chose a steadier rhythm.',
+    reminder: 'An uneasy moment is only one part of a much larger story.',
   },
 ];
 
@@ -133,11 +145,14 @@ const weatherCodeLabels = {
 
 const defaultView = {
   label: 'No mood yet',
+  emoji: '🌱',
   tone: 'Choose the Pokemon that feels closest to your mood right now.',
   themeClass: 'theme-neutral',
   pokemonName: 'Waiting guide',
   pokemonPower: 'unopened path',
   auraClass: 'pokemon-neutral',
+  noticed: 'You paused long enough to notice what is present.',
+  reminder: 'Showing up for yourself counts, even in small ways.',
 };
 
 const energyOptions = [
@@ -193,6 +208,8 @@ function App() {
   const [colorMode, setColorMode] = useState('light');
   const [ambientMode, setAmbientMode] = useState('off');
   const [currentStep, setCurrentStep] = useState('mood');
+  const [noticedText, setNoticedText] = useState('');
+  const [isCompleted, setIsCompleted] = useState(false);
   const [weatherState, setWeatherState] = useState({
     status: 'loading',
     data: null,
@@ -580,15 +597,15 @@ function App() {
             </section>
           )}
 
-          {currentStep === 'reflection' && hasPickedActivity && (
+          {currentStep === 'reflection' && hasPickedActivity && !isCompleted && (
             <section className="card section-grid section-grid-compact" aria-labelledby="quick-reflection-heading">
               <div className="section-copy">
-                <h2 id="quick-reflection-heading">Quick Reflection</h2>
-                <p>Everything you chose is gathered here in one compact view.</p>
+                <h2 id="quick-reflection-heading">Daily Check-in Complete</h2>
+                <p>{selectedMood.emoji} You showed up for yourself today.</p>
               </div>
 
               <div className="reflection-panel">
-                <div className="reflection-hero">
+                <div className="reflection-hero reflection-hero-final">
                   <div className={`reflection-pokemon ${selectedMood.auraClass}`}>
                     <img
                       className="reflection-pokemon-sprite"
@@ -599,26 +616,37 @@ function App() {
                   <div className="reflection-hero-copy">
                     <strong>{selectedMood.pokemonName}</strong>
                     <span>{selectedMood.pokemonPower}</span>
-                    <p>{selectedMood.tone}</p>
+                    <p>{selectedActivity}</p>
                   </div>
                 </div>
 
-                <div className="reflection-summary-grid">
-                  <div className="summary-card">
-                    <span>Mood</span>
-                    <strong>{selectedMood.label}</strong>
-                  </div>
-                  <div className="summary-card">
-                    <span>Energy</span>
-                    <strong>{energyLabel}</strong>
+                <div className="reflection-summary-list">
+                  <div className="summary-card summary-card-wide">
+                    <span>Today's mood</span>
+                    <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
                   </div>
                   <div className="summary-card summary-card-wide">
-                    <span>Activity</span>
+                    <span>What you noticed</span>
+                    <textarea
+                      className="noticed-input"
+                      rows="3"
+                      value={noticedText}
+                      onChange={(event) => setNoticedText(event.target.value)}
+                      placeholder={selectedMood.noticed}
+                      aria-label="What you noticed"
+                    />
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Remember</span>
+                    <strong>{selectedMood.reminder}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Your chosen action</span>
                     <strong>{selectedActivity}</strong>
                   </div>
                   <div className="summary-card summary-card-wide">
-                    <span>Helpful quote</span>
-                    <strong>{selectedQuote}</strong>
+                    <span>Energy</span>
+                    <strong>{energyLabel}</strong>
                   </div>
                 </div>
 
@@ -630,11 +658,79 @@ function App() {
                   <p className="reflection-weather-note">Current weather note: {weatherSummary.toLowerCase()} in Kuala Lumpur.</p>
                 )}
 
-                <blockquote className="quote-card">"{selectedQuote}"</blockquote>
-
                 <div className="step-nav step-nav-single-left">
                   <button type="button" className="step-button" onClick={() => goToStep(stepConfig.reflection.previous)}>
                     Back
+                  </button>
+                  <button
+                    type="button"
+                    className="step-button step-button-primary"
+                    onClick={() => setIsCompleted(true)}
+                  >
+                    Complete mood-tracker
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {currentStep === 'reflection' && hasPickedActivity && isCompleted && (
+            <section className="card section-grid section-grid-compact" aria-labelledby="completion-heading">
+              <div className="section-copy">
+                <h2 id="completion-heading">Mood-tracker complete</h2>
+                <p>{selectedMood.emoji} You showed up for yourself today.</p>
+              </div>
+
+              <div className="reflection-panel">
+                <div className="reflection-hero reflection-hero-final">
+                  <div className={`reflection-pokemon ${selectedMood.auraClass}`}>
+                    <img
+                      className="reflection-pokemon-sprite"
+                      src={selectedMood.sprite}
+                      alt={`${selectedMood.pokemonName} summary sprite`}
+                    />
+                  </div>
+                  <div className="reflection-hero-copy">
+                    <strong>{selectedMood.pokemonName}</strong>
+                    <span>{selectedMood.pokemonPower}</span>
+                    <p>{selectedActivity}</p>
+                  </div>
+                </div>
+
+                <div className="reflection-summary-list">
+                  <div className="summary-card summary-card-wide">
+                    <span>Today's mood</span>
+                    <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>What you noticed</span>
+                    <strong>{noticedText || selectedMood.noticed}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Remember</span>
+                    <strong>{selectedMood.reminder}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Your chosen action</span>
+                    <strong>{selectedActivity}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Energy</span>
+                    <strong>{energyLabel}</strong>
+                  </div>
+                </div>
+
+                <p className="reflection-note">
+                  {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
+                </p>
+
+                {weatherState.status === 'ready' && weatherState.data && (
+                  <p className="reflection-weather-note">Current weather note: {weatherSummary.toLowerCase()} in Kuala Lumpur.</p>
+                )}
+
+                <div className="step-nav step-nav-single-left">
+                  <button type="button" className="step-button" onClick={() => { setIsCompleted(false); setNoticedText(''); }}>
+                    Back to reflection
                   </button>
                 </div>
               </div>
