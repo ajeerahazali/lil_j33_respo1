@@ -5,69 +5,73 @@ const moods = [
     id: 'sad',
     label: 'Sad',
     emoji: '😔',
-  tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
-  themeClass: 'theme-sad',
-  pokemonName: 'Cubone',
-  pokemonPower: 'soft rain power',
-  type: 'Water',
-  dexNumber: '104',
-  dexDescription: 'A quiet moment has been observed.',
+    tone: 'Cubone fits a softer, heavier mood and keeps the next step gentle.',
+    themeClass: 'theme-sad',
+    pokemonName: 'Cubone',
+    pokemonPower: 'soft rain power',
+    powerIcon: '🌧️',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/104.gif',
     auraClass: 'pokemon-sad',
     noticed: 'You noticed heaviness and chose a gentler pace.',
     reminder: 'A difficult day does not define your whole journey.',
+    type: 'Water',
+    dexNumber: '104',
+    dexDescription: 'A quiet moment has been observed.',
   },
   {
     id: 'angry',
     label: 'Angry',
     emoji: '😠',
-  tone: 'Charizard matches strong heat and helps turn it into a clearer direction.',
-  themeClass: 'theme-angry',
-  pokemonName: 'Charizard',
-  pokemonPower: 'steady flame power',
-  type: 'Fire',
-  dexNumber: '006',
-  dexDescription: 'Strong feelings can be real without leading the whole day.',
+    tone: 'Charizard matches strong heat and helps turn it into a clearer direction.',
+    themeClass: 'theme-angry',
+    pokemonName: 'Charizard',
+    pokemonPower: 'steady flame power',
+    powerIcon: '🔥',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif',
     auraClass: 'pokemon-angry',
     noticed: 'You noticed strong pressure and looked for a steadier outlet.',
     reminder: 'Strong feelings can be real without leading the whole day.',
+    type: 'Fire',
+    dexNumber: '006',
+    dexDescription: 'Strong feelings can be real without leading the whole day.',
   },
   {
     id: 'happy',
     label: 'Happy',
     emoji: '🙂',
-  tone: 'Pikachu suits a bright mood and keeps that energy playful but steady.',
-  themeClass: 'theme-happy',
-  pokemonName: 'Pikachu',
-  pokemonPower: 'bright spark power',
-  type: 'Electric',
-  dexNumber: '025',
-  dexDescription: 'A good moment grows stronger when you notice it clearly.',
+    tone: 'Pikachu suits a bright mood and keeps that energy playful but steady.',
+    themeClass: 'theme-happy',
+    pokemonName: 'Pikachu',
+    pokemonPower: 'bright spark power',
+    powerIcon: '⚡',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif',
     auraClass: 'pokemon-happy',
     noticed: 'You noticed bright energy and gave it a calm direction.',
     reminder: 'A good moment grows stronger when you notice it clearly.',
+    type: 'Electric',
+    dexNumber: '025',
+    dexDescription: 'A good moment grows stronger when you notice it clearly.',
   },
   {
     id: 'anxious',
     label: 'Anxious',
     emoji: '😟',
-  tone: 'Psyduck fits a restless mind and brings things back toward rhythm.',
-  themeClass: 'theme-anxious',
-  pokemonName: 'Psyduck',
-  pokemonPower: 'ripple focus power',
-  type: 'Psychic',
-  dexNumber: '054',
-  dexDescription: 'An uneasy moment is only one part of a much larger story.',
+    tone: 'Psyduck fits a restless mind and brings things back toward rhythm.',
+    themeClass: 'theme-anxious',
+    pokemonName: 'Psyduck',
+    pokemonPower: 'ripple focus power',
+    powerIcon: '🌀',
     sprite:
       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/54.gif',
     auraClass: 'pokemon-anxious',
     noticed: 'You noticed restless thoughts and chose a steadier rhythm.',
     reminder: 'An uneasy moment is only one part of a much larger story.',
+    type: 'Psychic',
+    dexNumber: '054',
+    dexDescription: 'An uneasy moment is only one part of a much larger story.',
   },
 ];
 
@@ -415,23 +419,42 @@ function App() {
             <p className="weather-widget-message weather-error">Unavailable right now</p>
           )}
 
-          {weatherState.status === 'ready' && weatherState.data && (
-            <div className="weather-widget-grid">
-              <div>
-                <span>Location</span>
-                <strong>Kuala Lumpur</strong>
-              </div>
-              <div>
-                <span>Condition</span>
-                <strong>{weatherSummary}</strong>
-              </div>
-              <div>
-                <span>Temperature</span>
-                <strong>{weatherState.data.temperature} C</strong>
-              </div>
-            </div>
-          )}
-        </aside>
+           {weatherState.status === 'ready' && weatherState.data && (
+             <div className="weather-widget-grid">
+               <div>
+                 <span>Location</span>
+                 <strong>Kuala Lumpur</strong>
+               </div>
+               <div>
+                 <span>Condition</span>
+                 <strong>{weatherSummary}</strong>
+               </div>
+               <div>
+                 <span>Temperature</span>
+                 <strong>{weatherState.data.temperature} C</strong>
+               </div>
+             </div>
+           )}
+           <div className="weather-sound-control">
+             <span className="sound-control-label">Sound</span>
+             <div className="sound-chip-row">
+               {Object.entries(ambientTracks).map(([key, track]) => {
+                 const isSelected = ambientMode === key;
+
+                 return (
+                   <button
+                     key={key}
+                     type="button"
+                     className={`sound-chip ${isSelected ? 'selected' : ''}`}
+                     onClick={() => setAmbientMode(key)}
+                   >
+                     {track.label}
+                   </button>
+                 );
+               })}
+             </div>
+           </div>
+         </aside>
 
         <div className="step-frame section-reveal" key={currentStep}>
           {currentStep === 'mood' && (
@@ -455,7 +478,8 @@ function App() {
                          onClick={() => handleChooseMood(mood.id)}
                          aria-pressed={isSelected}
                        >
-                        <div className={`companion-sprite-wrap mood-card-sprite ${mood.auraClass}`}>
+                         <span className="mood-card-power" aria-hidden="true">{mood.powerIcon}</span>
+                         <div className={`companion-sprite-wrap mood-card-sprite ${mood.auraClass}`}>
                           <img
                             className="companion-sprite"
                             src={mood.sprite}
@@ -564,18 +588,17 @@ function App() {
                     const isSelected = activity === selectedActivity;
                     const quote = activityQuotes[activity] || 'One kind step is enough for right now.';
 
-                    return (
-                       <button
-                         key={activity}
-                         type="button"
-                         className={`activity-card ${isSelected ? 'selected' : ''}`}
-                         onClick={() => setSelectedActivity(activity)}
-                       >
-                         <strong>{activity}</strong>
-                         <span>{quote}</span>
-                         {isSelected && <span>Chosen for reflection</span>}
-                       </button>
-                    );
+                     return (
+                        <button
+                          key={activity}
+                          type="button"
+                          className={`activity-card ${isSelected ? 'selected' : ''}`}
+                          onClick={() => setSelectedActivity(activity)}
+                        >
+                          <strong>{activity}</strong>
+                          <span>{quote}</span>
+                        </button>
+                     );
                   })}
                 </div>
 
@@ -596,7 +619,7 @@ function App() {
             </section>
           )}
 
-          {currentStep === 'reflection' && hasPickedActivity && !isCompleted && (
+          {currentStep === 'reflection' && hasPickedActivity && (
             <section className="card section-grid section-grid-compact" aria-labelledby="quick-reflection-heading">
               <div className="section-copy">
                 <h2 id="quick-reflection-heading">Daily Check-in Summary</h2>
@@ -660,88 +683,9 @@ function App() {
                   <button
                     type="button"
                     className="step-button step-button-primary"
-                    onClick={() => setIsCompleted(true)}
+                    onClick={() => setCurrentStep('mooddex')}
                   >
                     Complete Check-in
-                  </button>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {currentStep === 'reflection' && hasPickedActivity && isCompleted && (
-            <section className="card section-grid section-grid-compact" aria-labelledby="completion-heading">
-              <div className="section-copy">
-                <h2 id="completion-heading">Mood-tracker complete</h2>
-                <p>{selectedMood.emoji} You showed up for yourself today.</p>
-              </div>
-
-              <div className="reflection-panel">
-                <div className="reflection-hero reflection-hero-final">
-                  <div className={`reflection-pokemon ${selectedMood.auraClass}`}>
-                    <img
-                      className="reflection-pokemon-sprite"
-                      src={selectedMood.sprite}
-                      alt={`${selectedMood.pokemonName} summary sprite`}
-                    />
-                  </div>
-                  <div className="reflection-hero-copy">
-                    <strong>{selectedMood.pokemonName}</strong>
-                    <span>{selectedMood.pokemonPower}</span>
-                    <p>{selectedActivity}</p>
-                  </div>
-                </div>
-
-                <div className="reflection-summary-list">
-                  <div className="summary-card summary-card-wide">
-                    <span>Today's mood</span>
-                    <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>What you noticed</span>
-                    <strong>{noticedText || selectedMood.noticed}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Remember</span>
-                    <strong>{selectedMood.reminder}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Your chosen action</span>
-                    <strong>{selectedActivity}</strong>
-                  </div>
-                  <div className="summary-card summary-card-wide">
-                    <span>Energy</span>
-                    <strong>{energyLabel}</strong>
-                  </div>
-                </div>
-
-                <p className="reflection-note">
-                  {`Right now, you feel ${selectedMood.label.toLowerCase()} with ${energyLabel.toLowerCase()}, and you chose: ${selectedActivity}.`}
-                </p>
-
-                <div className="step-nav step-nav-single-left">
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => {
-                      setConfirmedMoodId('');
-                      setHasChosenEnergy(false);
-                      setSelectedActivity('');
-                      setNoticedText('');
-                      setIsCompleted(false);
-                      setCurrentStep('mood');
-                    }}
-                  >
-                    log another
-                  </button>
-                  <button
-                    type="button"
-                    className="step-button step-button-primary"
-                    onClick={() => {
-                      setCurrentStep('mooddex');
-                    }}
-                  >
-                    View MoodDex
                   </button>
                 </div>
               </div>
@@ -774,6 +718,29 @@ function App() {
                   </div>
                 </div>
 
+                <div className="mooddex-summary">
+                  <div className="summary-card summary-card-wide">
+                    <span>Today's mood</span>
+                    <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>What you noticed</span>
+                    <strong>{noticedText || selectedMood.noticed}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Remember</span>
+                    <strong>{selectedMood.reminder}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Your chosen action</span>
+                    <strong>{selectedActivity}</strong>
+                  </div>
+                  <div className="summary-card summary-card-wide">
+                    <span>Energy</span>
+                    <strong>{energyLabel}</strong>
+                  </div>
+                </div>
+
                 <div className="mooddex-trainer-notes">
                   <h3>Trainer Notes:</h3>
                   <blockquote>"{selectedMood.reminder}"</blockquote>
@@ -802,59 +769,22 @@ function App() {
                   </button>
                   <button
                     type="button"
-                    className="step-button"
-                    onClick={() => setShowJournal(false)}
-                  >
-                    🔍 View your MoodDex
-                  </button>
-                  <button
-                    type="button"
                     className="step-button step-button-primary"
                     onClick={() => {
                       setConfirmedMoodId('');
                       setHasChosenEnergy(false);
                       setSelectedActivity('');
                       setNoticedText('');
-                      setIsCompleted(false);
                       setCurrentStep('mood');
                       setJournalText('');
                       setShowJournal(false);
                     }}
                   >
-                    🌱 Continue your journey
+                    🏠
                   </button>
                 </div>
               </div>
             </section>
-          )}
-        </div>
-        <div className="sound-toggle-wrap">
-          <button
-            type="button"
-            className={`sound-toggle ${soundOpen ? 'open' : ''}`}
-            onClick={() => setSoundOpen((current) => !current)}
-            aria-expanded={soundOpen}
-          >
-            <span className="sound-toggle-label">{ambientMode === 'off' ? '🔇' : '🎵'}</span>
-            <span className="sound-toggle-arrow" aria-hidden="true">▾</span>
-          </button>
-          {soundOpen && (
-            <div className="sound-options" role="menu">
-              {Object.entries(ambientTracks).map(([key, track]) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={`sound-option ${ambientMode === key ? 'selected' : ''}`}
-                  onClick={() => {
-                    setAmbientMode(key);
-                    setSoundOpen(false);
-                  }}
-                  role="menuitem"
-                >
-                  {track.label}
-                </button>
-              ))}
-            </div>
           )}
         </div>
       </div>
