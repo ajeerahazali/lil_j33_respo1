@@ -267,6 +267,15 @@ function App() {
     error: '',
   });
   const ambientAudioRef = useRef(null);
+  const selectAudioRef = useRef(null);
+
+  const playSelectSound = useCallback(() => {
+    const audio = selectAudioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.volume = 0.3;
+    audio.play().catch(() => {});
+  }, []);
 
   const selectedMood = moods.find((mood) => mood.id === confirmedMoodId) ?? defaultView;
   const hasPickedMood = confirmedMoodId !== '';
@@ -402,6 +411,7 @@ function App() {
   const handleChooseMood = (moodId) => {
     const hasChangedMood = confirmedMoodId !== moodId;
     setConfirmedMoodId(moodId);
+    playSelectSound();
     if (hasChangedMood) {
       setHasChosenEnergy(false);
       setSelectedActivity('');
@@ -413,6 +423,7 @@ function App() {
     const hasChangedEnergy = !hasChosenEnergy || energy !== value;
     setEnergy(value);
     setHasChosenEnergy(true);
+    playSelectSound();
     if (hasChangedEnergy) {
       setSelectedActivity('');
     }
@@ -446,6 +457,9 @@ function App() {
     <main className={`app-shell ${selectedMood.themeClass} ${colorMode === 'dark' ? 'mode-dark' : 'mode-light'}`}>
       <div className="app-frame">
         <audio ref={ambientAudioRef} aria-hidden="true" />
+        <audio ref={selectAudioRef} aria-hidden="true" preload="auto">
+          <source src="https://www.orangefreesounds.com/wp-content/uploads/2020/09/8-bit-pop-sound-effect.mp3" type="audio/mpeg" />
+        </audio>
       <div className="top-widgets">
         <aside className="mode-widget" aria-label="Display mode">
           <button
@@ -660,7 +674,7 @@ function App() {
                             key={activity}
                             type="button"
                             className={`activity-card ${isSelected ? 'selected' : ''}`}
-                            onClick={() => setSelectedActivity(activity)}
+                             onClick={() => { setSelectedActivity(activity); playSelectSound(); }}
                           >
                             <strong>{activity}</strong>
                             <span>{quote}</span>
@@ -790,56 +804,49 @@ function App() {
                   <span className="pokedex-led-dot green" />
                 </div>
 
-                <div className="pokedex-screen">
-                  <div className="mooddex-entry">
-                    <div className={`mooddex-hero mooddex-hero-centered`}>
-                      <div className={`mooddex-pokemon ${selectedMood.auraClass}`}>
-                        <img
-                          className="mooddex-pokemon-sprite"
-                          src={selectedMood.sprite}
-                          alt={`${selectedMood.pokemonName} MoodDex sprite`}
-                        />
-                      </div>
-                      <div className="mooddex-hero-copy">
-                        <strong>{selectedMood.pokemonName}</strong>
-                      </div>
-                    </div>
+                 <div className="pokedex-screen">
+                   <div className="mooddex-entry">
+                     <div className={`mooddex-hero mooddex-hero-centered`}>
+                       <div className={`mooddex-pokemon ${selectedMood.auraClass}`}>
+                         <img
+                           className="mooddex-pokemon-sprite"
+                           src={selectedMood.sprite}
+                           alt={`${selectedMood.pokemonName} MoodDex sprite`}
+                         />
+                       </div>
+                     </div>
 
-                    <div className="mooddex-summary">
-                      <div className="summary-card summary-card-wide">
-                        <span>Today's mood</span>
-                        <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
-                      </div>
-                      <div className="summary-card summary-card-wide">
-                        <span>Energy</span>
-                        <strong>{energyLabel}</strong>
-                      </div>
-                      <div className="summary-card summary-card-wide">
-                        <span>Your chosen action</span>
-                        <strong>{selectedActivity}</strong>
-                      </div>
-                      <div className="summary-card summary-card-wide">
-                        <span>Journal</span>
-                        <textarea
-                          className="noticed-input"
-                          rows="3"
-                          value={noticedText}
-                          onChange={(event) => setNoticedText(event.target.value)}
-                          placeholder={selectedMood.noticed}
-                          aria-label="Journal"
-                          readOnly={!noticedText}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mooddex-summary">
-                      <div className="summary-card summary-card-wide">
-                        <span>Remember</span>
-                        <strong>{selectedMood.reminder}</strong>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                     <div className="mooddex-summary">
+                       <div className="summary-card summary-card-wide">
+                         <span>Today's mood</span>
+                         <strong>{selectedMood.emoji} Feeling {selectedMood.label.toLowerCase()}</strong>
+                       </div>
+                       <div className="summary-card summary-card-wide">
+                         <span>Energy</span>
+                         <strong>{energyLabel}</strong>
+                       </div>
+                       <div className="summary-card summary-card-wide">
+                         <span>Your chosen action</span>
+                         <strong>{selectedActivity}</strong>
+                       </div>
+                       <div className="summary-card summary-card-wide">
+                         <span>Remember</span>
+                         <strong>{selectedMood.reminder}</strong>
+                       </div>
+                       <div className="summary-card summary-card-wide">
+                         <span>Journal</span>
+                         <textarea
+                           className="noticed-input"
+                           rows="3"
+                           value={noticedText}
+                           onChange={(event) => setNoticedText(event.target.value)}
+                           placeholder={selectedMood.noticed}
+                           aria-label="Journal"
+                         />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
 
                 <div className="pokedex-badge" aria-label={`MoodDex entry ${selectedMood.dexNumber}`}>
                   #{selectedMood.dexNumber} Recorded
